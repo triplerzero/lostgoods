@@ -2,52 +2,23 @@
   <div class="index">
   <el-container style="height: 742px; border: 1px solid #eee">
     <div class="aside">
-        <el-aside width="200px" style="background-color: #66b1ff">
-            <el-menu :default-openeds="['1', '3']">
+        <el-aside width="200px" style="background-color: #eee">
+            <el-menu :default-openeds="['1', '3']" default-active="index">
+              <div class="logo">
+              </div>
               <el-submenu index="1">
                 <template slot="title"><i class="el-icon-message"></i>失物</template>
                 <el-menu-item-group>
-                  <template slot="title">分组一</template>
-                  <el-menu-item index="1-1">选项1</el-menu-item>
-                  <el-menu-item index="1-2">选项2</el-menu-item>
+                  <el-menu-item index="1-1">失物信息</el-menu-item>
+                  <el-menu-item index="1-2">失物发布</el-menu-item>
                 </el-menu-item-group>
-                <el-menu-item-group title="分组2">
-                  <el-menu-item index="1-3">选项3</el-menu-item>
-                </el-menu-item-group>
-                <el-submenu index="1-4">
-                  <template slot="title">选项4</template>
-                  <el-menu-item index="1-4-1">选项4-1</el-menu-item>
-                </el-submenu>
               </el-submenu>
               <el-submenu index="2">
-                <template slot="title"><i class="el-icon-menu"></i>导航二</template>
+                <template slot="title"><i class="el-icon-menu"></i>个人中心</template>
                 <el-menu-item-group>
-                  <template slot="title">分组一</template>
-                  <el-menu-item index="2-1">选项1</el-menu-item>
-                  <el-menu-item index="2-2">选项2</el-menu-item>
-                </el-menu-item-group>
-                <el-menu-item-group title="分组2">
-                  <el-menu-item index="2-3">选项3</el-menu-item>
-                </el-menu-item-group>
-                <el-submenu index="2-4">
-                  <template slot="title">选项4</template>
-                  <el-menu-item index="2-4-1">选项4-1</el-menu-item>
-                </el-submenu>
-              </el-submenu>
-              <el-submenu index="3">
-                <template slot="title"><i class="el-icon-setting"></i>导航三</template>
-                <el-menu-item-group>
-                  <template slot="title">分组一</template>
-                  <el-menu-item index="3-1">选项1</el-menu-item>
-                  <el-menu-item index="3-2">选项2</el-menu-item>
-                </el-menu-item-group>
-                <el-menu-item-group title="分组2">
-                  <el-menu-item index="3-3">选项3</el-menu-item>
-                </el-menu-item-group>
-                <el-submenu index="3-4">
-                  <template slot="title">选项4</template>
-                  <el-menu-item index="3-4-1">选项4-1</el-menu-item>
-                </el-submenu>
+                    <el-menu-item index="1-1">选项1</el-menu-item>
+                    <el-menu-item index="1-2">选项2</el-menu-item>
+                  </el-menu-item-group>
               </el-submenu>
             </el-menu>
           </el-aside>
@@ -55,14 +26,9 @@
 
     <el-container>
       <el-header style="text-align: right; font-size: 12px">
-        <el-dropdown>
-          <i class="el-icon-setting" style="margin-right: 15px"></i>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>查看</el-dropdown-item>
-            <el-dropdown-item>新增</el-dropdown-item>
-            <el-dropdown-item>删除</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
+        <div class="avatar">
+          <img src="../src/zhemu.jpg" alt="">
+        </div>
         <span>{{name}}</span>
       </el-header>
       <div class="main">
@@ -91,11 +57,21 @@ export default {
   data() {
     return {
       name: '',
-      tableData:''
+      tableData:'',
+      index:'1-1'
   }
 },
   beforeMount() {
-    this.name = this.$cookies.get("username")
+    this.name = this.$cookies.get("username");
+    if(!this.$cookies.get("username")){
+      this.$message({
+              message: "请登陆后再进行访问",
+              type: "error",
+              center: "true"
+            });
+      this.$router.push({path:"login"});
+    }
+    
   },
   created(){
     const item = {
@@ -110,10 +86,42 @@ export default {
 </script>
 
 <style scoped>
+    .logo{
+      background: #66b1ff;
+      width: 180px;
+      height: 80px;
+      background-image: url("../src/lost.jpg");
+      background-size:100% 100%;
+    }
+    .avatar{
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      padding-right:20px; 
+    }
+    .avatar img{
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border:2px solid#fff;
+        cursor: pointer;
+    }
+    .avatar img:hover{
+        border:2px solid#66b1ff;
+    }
+    .el-menu-item-group__title{
+      padding: 0;
+    }
+    .el-submenu__title,.el-menu-item{
+      padding: 0 40px; 
+    }
     .el-header {
-      background-color: #66b1ff;
+      background-color: #fff;
       color: #333;
       line-height: 60px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
     }
     .aside{
       width: 180px;
@@ -126,6 +134,7 @@ export default {
       height: 100%;
       position: relative;
       overflow: hidden; 
+      background: #f5f5f5;
     }
     .el-aside,.el-main {
       color: #333;

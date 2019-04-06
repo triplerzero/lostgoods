@@ -15,14 +15,14 @@ const utils = require('utility');
 
 // });
 //插入数据
-let pwds=md5Pwd('admin');
-let {adminId,adminName,pwd}={adminId:'admin',adminName:'admin',pwd:pwds};
-Admin.create({adminId,adminName,pwd});
+// let pwds=md5Pwd('admin');
+// let {adminId,adminName,sex,pwd}={adminId:'admin',adminName:'admin',sex:0,pwd:pwds};
+// Admin.create({adminId,adminName,sex,pwd});
 
 //用户表插入数据
-// let psw=md5Pwd(2015354146);
-// let {userId,userName,pwd}={userId:'2015354146',userName:'2015354146',pwd:psw};
-// User.create({userId,userName,pwd})
+// let psw=md5Pwd(2015354100);
+// let {userId,userName,sex,pwd}={userId:'2015354100',userName:'2015354100',sex:1,pwd:psw};
+// User.create({userId,userName,sex,pwd})
 
 //清空user表中的数据
 Router.get('/remove', (req, res) => {

@@ -9,11 +9,13 @@ const models={
   user:{
     userId:{type:'String',require:'true'},
     userName:{type:'String',require:'true'},
+    sex:{type:'Number',require:'true'},
     pwd:{type:'String',require:'true'}
   },
   admin:{
     adminId:{type:'String',require:'true'},
     adminName:{type:'String',require:'true'},
+    sex:{type:'Number',require:'true'},
     pwd:{type:'String',require:'true'}
   }
 }
