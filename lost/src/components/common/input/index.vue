@@ -10,6 +10,19 @@
           <el-input v-model="form.goodsname" placeholder="物品名称":disabled="form.edit"></el-input>
       </div>
       <div class="item">
+        <div class="text"><label>物品图片:</label></div>
+        <el-upload
+        class="avatar-uploader"
+        action="https://jsonplaceholder.typicode.com/posts/"
+        :show-file-list="false"
+        :on-success="handleAvatarSuccess"
+        :disabled="form.edit"
+        >
+        <img v-if="imageUrl" :src="imageUrl" class="avatar">
+        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+        </el-upload>
+      </div>
+      <div class="item">
           <div class="text"><label>发布时间:</label></div>
           <el-date-picker
           v-model="form.date"
@@ -89,7 +102,13 @@
           value: '2',
           label: '已领取'
         }],
-        value4: '1'
+        value4: '1',
+        imageUrl:''
+      }
+    },
+    methods:{
+      handleAvatarSuccess(res, file) {
+        this.imageUrl = URL.createObjectURL(file.raw);
       }
     }
   }
@@ -134,5 +153,30 @@
     .el-textarea{
       width: 70%;
     }
+  }
+
+
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
   }
 </style>

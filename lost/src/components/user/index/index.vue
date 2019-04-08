@@ -10,7 +10,6 @@
                 <template slot="title"><i class="el-icon-message"></i>失物管理</template>
                 <el-menu-item-group>
                   <el-menu-item index="1-1">失物信息</el-menu-item>
-                  <el-menu-item index="1-2">失物详情</el-menu-item>
                 </el-menu-item-group>
               </el-submenu>
               <el-submenu index="2">
@@ -46,7 +45,9 @@
         <el-table :data="tableData" stripe>
           <el-table-column prop="date" label="日期">
           </el-table-column>
-          <el-table-column prop="name" label="学生姓名">
+          <el-table-column prop="id" label="发布人学号">
+          </el-table-column>
+          <el-table-column prop="name" label="发布人姓名">
           </el-table-column>
           <el-table-column prop="type" label="发布类型">
           </el-table-column>
@@ -90,9 +91,13 @@ export default {
 methods: {
       handleSelect(key, keyPath) {
         console.log(key, keyPath);
+        if(key==='2-2'){
+            this.$router.push({path:"user/addgoods"})
+          }
       },
       handleClick(row) {
         console.log(row);
+        this.$router.push({path:"goods/goodsdetails",query:{id:row.id}});
       }
 },
   beforeMount() {
@@ -110,6 +115,7 @@ methods: {
   created(){
     const item = {
           date: '2016-05-02',
+          id:'2015354146',
           name: '王小虎',
           type:'失物招领',
           address: '北街到综B的路途中',
