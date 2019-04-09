@@ -23,7 +23,7 @@
         </el-upload>
       </div>
       <div class="item">
-          <div class="text"><label>发布时间:</label></div>
+          <div class="text"><label>丢失/拾取时间:</label></div>
           <el-date-picker
           v-model="form.date"
           type="datetime"
@@ -33,10 +33,14 @@
         </el-date-picker>
       </div>
       <div class="item">
+        <div class="text"><label>联系方式:</label></div>
+        <el-input v-model="form.phone" placeholder="联系方式":disabled="form.edit"></el-input>
+      </div>
+      <div class="item">
           <div class="text"><label>发布类型:</label></div>
           <div class="radio">
-              <el-radio v-model="form.radio" label="1" :disabled="form.edit">失物招领</el-radio>
-              <el-radio v-model="form.radio" label="2" :disabled="form.edit">寻物启事</el-radio>
+              <el-radio v-model="form.type" label="1" :disabled="form.edit">失物招领</el-radio>
+              <el-radio v-model="form.type" label="2" :disabled="form.edit">寻物启事</el-radio>
           </div>
       </div>
       <div class="item">
@@ -68,14 +72,14 @@
             type="textarea"
             :rows="5"
             placeholder="请输入备注信息"
-            v-model="form.textarea"
+            v-model="form.remarks"
             :disabled="form.edit"
             >
           </el-input>
       </div>
       <div class="btn" v-if="!form.edit">
           <el-button type="info">返回</el-button>
-          <el-button type="primary">保存</el-button>
+          <el-button type="primary" @click='save'>保存</el-button>
       </div>
     </div>
 </template>
@@ -84,13 +88,6 @@
   export default{
     props:{
       form:{
-        edit:'',
-        radio:'',
-        name:'',
-        goodsname:'',
-        date:'',
-        feature:'',
-        textarea:''
       }
     },
     data(){
@@ -109,6 +106,48 @@
     methods:{
       handleAvatarSuccess(res, file) {
         this.imageUrl = URL.createObjectURL(file.raw);
+      },
+      save(){
+        console.log(this.form.date.getFullYear());
+        let { date,
+              id,
+              name,
+              pic,
+              type,
+              address,
+              goodsname,
+              feature,
+              state,
+              phone,
+              remarks}=this.form;
+        console.log({ date,
+              id,
+              name,
+              pic,
+              type,
+              address,
+              goodsname,
+              feature,
+              state,
+              phone,
+              remarks})
+        // axios.post("/user/addGoods", { userId, pwd }).then(res => {
+        //   console.log(res);
+        //   if (res.status == 200 && res.data.code == 0) {
+        //     this.$message({
+        //       message: "登陆成功",
+        //       type: "success",
+        //       center: "true"
+        //     });
+        //     this.$router.push({ path: "/index" });
+        //   } else {
+        //     this.$message({
+        //       message: res.data.msg,
+        //       type: "error",
+        //       center: "true"
+        //     });
+        //   }
+        // });
       }
     }
   }
@@ -131,9 +170,6 @@
     .el-radio__label{
       color:#409EFF;
     }
-    /* .el-radio__input.is-disabled+span.el-radio__label {
-      color:#409EFF;
-    } */
     .text{
       width: 200px;
       padding-right:10px; 
@@ -142,14 +178,14 @@
     .radio{
       padding-left:6px; 
     }
-    .el-input.is-disabled .el-input__inner{
+    /* .el-input.is-disabled .el-input__inner{
       color: #409EFF;
     }
     .el-radio__input.is-disabled.is-checked .el-radio__inner::after {
       background-color: #409EFF;
       width: 6px;
       height: 6px;
-    }
+    } */
     .el-textarea{
       width: 70%;
     }

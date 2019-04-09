@@ -7,6 +7,7 @@ const db = require('./db');
 //获取表
 const User = db.getModel('user');
 const Admin=db.getModel('admin');
+const Goods=db.getModel('goods');
 //引入加密中间件
 const utils = require('utility');
 
@@ -80,5 +81,63 @@ function md5Pwd(pwd){
   const salt = "novazero";
   return utils.md5(utils.md5(pwd+salt));
 }
+
+//新增物品
+Router.post('/addGoods',(req,res)=>{
+  let {
+    date,
+    id,
+    name,
+    pic,
+    type,
+    address,
+    goodsname,
+    feature,
+    state,
+    phone,
+    remarks 
+  }=req.body;
+  Goods.create({
+    date,
+    id,
+    name,
+    pic,
+    type,
+    address,
+    goodsname,
+    feature,
+    state,
+    phone,
+    remarks
+  },(err,doc)=>{
+    if (!doc) {
+      return res.json({
+        code: 1,
+        msg: '新增失败'
+      })
+    }else{
+      return res.json({
+        code: 0,
+        data: doc
+      })
+    }
+  })
+})
+//获取失物列表信息
+Router.get('/getGoodsList',(req,res)=>{
+  Goods.find({},(err,doc)=>{
+    if (!doc) {
+      return res.json({
+        code: 1,
+        msg: '没有数据返回'
+      })
+    }else{
+      return res.json({
+        code: 0,
+        data: doc
+      })
+    }
+  })
+})
 
 module.exports = Router;

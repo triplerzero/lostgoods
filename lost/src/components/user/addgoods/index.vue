@@ -59,13 +59,21 @@
         type:'失物',
         radio:'1',
         form:{
-          goodsname:'折叠伞',
+          date:'',
+          id:'',
+          name:'',
+          pic:'',
+          type:1,
+          address:'',
+          goodsname:'',
           feature:'',
+          state:1,
+          phone:'',
+          remarks:'',
           edit:false,
-          type:'失物',
-          radio:'1',
-          name:'王大锤',
-          date: new Date()
+          save:function(){
+            console.log(2323)
+          }
         }
     }
   },
@@ -75,7 +83,8 @@
         },
         handleClick(row) {
           console.log(row);
-        }
+        },
+
   },
     beforeMount() {
       this.username = this.$cookies.get("username");

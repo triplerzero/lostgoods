@@ -17,6 +17,19 @@ const models={
     adminName:{type:'String',require:'true'},
     sex:{type:'Number',require:'true'},
     pwd:{type:'String',require:'true'}
+  },
+  goods:{
+    date:{type:'String'},
+    id:{type:'String'},
+    name:{type:'String'},
+    pic:{type:'String'},
+    type:{type:'Number'},
+    gooodsname:{type:'String',require:'true'},
+    feature:{type:'String',require:'true'},
+    address:{type:'String',require:'true'},
+    phone:{type:'String',require:'true'},
+    remarks:{type:'String'},
+    state:{type:'Number'}
   }
 }
 
