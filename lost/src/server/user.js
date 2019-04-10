@@ -51,6 +51,7 @@ Router.post('/login', (req, res) => {
       })
     }
     res.cookie('username',doc.userName);
+    res.cookie('userid',doc.userId);
     return res.json({code:0,data:doc})
   })
 })
@@ -84,32 +85,9 @@ function md5Pwd(pwd){
 
 //新增物品
 Router.post('/addGoods',(req,res)=>{
-  let {
-    date,
-    id,
-    name,
-    pic,
-    type,
-    address,
-    goodsname,
-    feature,
-    state,
-    phone,
-    remarks 
-  }=req.body;
-  Goods.create({
-    date,
-    id,
-    name,
-    pic,
-    type,
-    address,
-    goodsname,
-    feature,
-    state,
-    phone,
-    remarks
-  },(err,doc)=>{
+  Goods.create(
+    req.body
+    ,(err,doc)=>{
     if (!doc) {
       return res.json({
         code: 1,
@@ -137,6 +115,24 @@ Router.get('/getGoodsList',(req,res)=>{
         data: doc
       })
     }
+  })
+})
+//获取失物列表信息
+Router.get('/getGoodsDetail',(req,res)=>{
+  Goods.findOne({
+    _id:req.query.id
+  },(err,doc)=>{
+    if (!doc) {
+      return res.json({
+        code: 1,
+        msg: '没有数据返回'
+      })
+    }else{
+      return res.json({
+        code: 0,
+        data: doc
+      })
+    }   
   })
 })
 

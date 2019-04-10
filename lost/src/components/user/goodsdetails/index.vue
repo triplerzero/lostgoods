@@ -38,7 +38,7 @@
         </el-header>
         <div class="main">
         <el-main>
-            <input-text :form='form'></input-text>
+            <input-text :form='form' :edit='edit'></input-text>
         </el-main>
         </div>
       </el-container>
@@ -48,17 +48,13 @@
   
   <script>
   import inputText from '../../common/input';
+  import axios from 'axios';
   export default {
     data() {
       return {
         username: '',
-        tableData:'',
         index:'1-2',
-        goodsname:'折叠伞',
-        feature:'',
         edit:true,
-        type:'失物',
-        radio:'1',
         form:{
           goodsname:'折叠伞',
           feature:'',
@@ -91,20 +87,11 @@
       
     },
     created(){
-      const item = {
-            date: '2016-05-02',
-            name: '王小虎',
-            type:'失物招领',
-            address: '北街到综B的路途中',
-            goodsname:'折叠伞',
-            feature:'浅蓝色/带花纹',
-            phone:'13800000000',
-            remarks:'想取回失物请拨打联系电话13800000000联系拾主与约定时间地点取回',
-            details:function(item){
-              console.log(item);
-            }
-          }
-          this.tableData=Array(20).fill(item)
+      let query=this.$route.query.id;
+      axios.get('/user/getGoodsDetail?id='+query+'').then(res=>{
+        console.log(res);
+        this.form=res.data.data;
+      })
     },
     components:{
       inputText

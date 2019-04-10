@@ -40,18 +40,34 @@
           <el-input v-model="feature" placeholder="物品特征"></el-input>
           <el-button type="primary">搜索</el-button>
       </div>
+      <div class="tab">
+          <el-tabs v-model="activeName" @tab-click="handleTab">
+              <el-tab-pane label="全部" name="first"></el-tab-pane>
+              <el-tab-pane label="失物招领" name="second"></el-tab-pane>
+              <el-tab-pane label="寻物启事" name="third"></el-tab-pane>
+          </el-tabs>
+      </div>
       <div class="main">
       <el-main>
         <el-table :data="tableData" stripe>
-          <el-table-column prop="date" label="日期">
+          <el-table-column prop="goodsname" label="物品">
+              <template slot-scope="scope">
+                <div class="goods_msg">
+                  <img :src="scope.row.pic" class="goods_pic"/>
+                  <span class="goods_name">{{scope.row.goodsname}}</span>
+                </div>
+              </template>
+          </el-table-column>
+          <el-table-column prop="date" label="丢失/拾取时间">
           </el-table-column>
           <el-table-column prop="id" label="发布人学号">
           </el-table-column>
           <el-table-column prop="name" label="发布人姓名">
           </el-table-column>
           <el-table-column prop="type" label="发布类型">
-          </el-table-column>
-          <el-table-column prop="goodsname" label="物品名称">
+              <template slot-scope="scope">
+                <span>{{type[scope.row.type]}}</span> 
+              </template>
           </el-table-column>
           <el-table-column prop="feature" label="物品特征">
           </el-table-column>
@@ -62,6 +78,9 @@
           <el-table-column prop="remarks" label="备注"> 
           </el-table-column>
           <el-table-column prop="state" label="失物状态"> 
+              <template slot-scope="scope">
+                  <span>{{status[scope.row.state]}}</span> 
+                </template>
           </el-table-column>
           <el-table-column prop="details" label="操作"> 
               <template slot-scope="scope">
@@ -78,14 +97,24 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   data() {
     return {
       name: '',
-      tableData:'',
+      tableData:[],
       index:'1-1',
       goodsname:'',
-      feature:''
+      feature:'',
+      activeName: 'second',
+      type:{
+        "1":"失物招领",
+        "2":"寻物启事"
+      },
+      status:{
+        "1":"未领取",
+        "2":"已领取"
+      }
   }
 },
 methods: {
@@ -97,7 +126,10 @@ methods: {
       },
       handleClick(row) {
         console.log(row);
-        this.$router.push({path:"goods/goodsdetails",query:{id:row.id}});
+        this.$router.push({path:"goods/goodsdetails",query:{id:row._id}});
+      },
+      handleTab(tab, event) {
+        console.log(tab);
       }
 },
   beforeMount() {
@@ -113,22 +145,12 @@ methods: {
     
   },
   created(){
-    const item = {
-          date: '2016-05-02',
-          id:'2015354146',
-          name: '王小虎',
-          type:'失物招领',
-          address: '北街到综B的路途中',
-          goodsname:'折叠伞',
-          feature:'浅蓝色/带花纹',
-          state:"未领取",
-          phone:'13800000000',
-          remarks:'想取回失物请拨打联系电话13800000000联系拾主与约定时间地点取回',
-          details:function(item){
-            console.log(item);
-          }
-        }
-        this.tableData=Array(20).fill(item)
+    axios.get('/user/getGoodsList').then(res=>{
+      if (res.status == 200 && res.data.code == 0) {
+        let data=res.data.data;
+        this.tableData=data;
+      }
+    })
   }
 };
 </script>
@@ -230,5 +252,23 @@ methods: {
     width: 15%;
     padding-right:10px;
   }
+}
+
+.tab{
+  padding: 10px 20px 10px;
+  justify-content: flex-start;
+  background: #f5f5f5;
+}
+.goods_msg{
+  display: flex;
+  align-items: center;
+.goods_pic{
+  width: 40px;
+  height: 40px;
+}
+.goods_name{
+  color:#66b1ff;
+  padding-left:10px; 
+}
 }
 </style>

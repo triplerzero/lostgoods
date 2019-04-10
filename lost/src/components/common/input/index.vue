@@ -1,13 +1,17 @@
 
 <template>
   <div>
-    <div class="item">
+      <div class="item">
+          <div class="text"><label>发布人学号:</label></div>
+          <el-input v-model="form.id" placeholder="发布人学号" :disabled="edit"></el-input>
+        </div>
+      <div class="item">
         <div class="text"><label>发布人:</label></div>
-        <el-input v-model="form.name" placeholder="发布人" :disabled="form.edit"></el-input>
+        <el-input v-model="form.name" placeholder="发布人" :disabled="edit"></el-input>
       </div>
       <div class="item">
           <div class="text"><label>物品名称:</label></div>
-          <el-input v-model="form.goodsname" placeholder="物品名称":disabled="form.edit"></el-input>
+          <el-input v-model="form.goodsname" placeholder="物品名称":disabled="edit"></el-input>
       </div>
       <div class="item">
         <div class="text"><label>物品图片:</label></div>
@@ -16,16 +20,16 @@
         action="https://jsonplaceholder.typicode.com/posts/"
         :show-file-list="false"
         :on-success="handleAvatarSuccess"
-        :disabled="form.edit"
+        :disabled="edit"
         >
-        <img v-if="imageUrl" :src="imageUrl" class="avatar">
+        <img v-if="form.pic" :src="form.pic" class="avatar">
         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
       </div>
       <div class="item">
           <div class="text"><label>丢失/拾取时间:</label></div>
           <el-date-picker
-          v-model="form.date"
+          v-model="date"
           type="datetime"
           placeholder="选择日期时间"
           :disabled="form.edit"
@@ -33,19 +37,23 @@
         </el-date-picker>
       </div>
       <div class="item">
+        <div class="text"><label>丢失/拾取地点:</label></div>
+        <el-input v-model="form.address" placeholder="丢失/拾取地点":disabled="edit"></el-input>
+      </div>
+      <div class="item">
         <div class="text"><label>联系方式:</label></div>
-        <el-input v-model="form.phone" placeholder="联系方式":disabled="form.edit"></el-input>
+        <el-input v-model="form.phone" placeholder="联系方式":disabled="edit"></el-input>
       </div>
       <div class="item">
           <div class="text"><label>发布类型:</label></div>
           <div class="radio">
-              <el-radio v-model="form.type" label="1" :disabled="form.edit">失物招领</el-radio>
-              <el-radio v-model="form.type" label="2" :disabled="form.edit">寻物启事</el-radio>
+              <el-radio v-model="form.type" label="1" :disabled="edit">失物招领</el-radio>
+              <el-radio v-model="form.type" label="2" :disabled="edit">寻物启事</el-radio>
           </div>
       </div>
       <div class="item">
           <div class="text"><label>物品状态:</label></div>
-          <el-select v-model="value4" clearable placeholder="请选择" :disabled="form.edit">
+          <el-select v-model="form.state" clearable placeholder="请选择" :disabled="edit">
               <el-option
                 v-for="item in options"
                 :key="item.value"
@@ -61,7 +69,7 @@
           type="textarea"
           :rows="5"
           placeholder="请输入物品特征"
-          v-model="form.textarea"
+          v-model="form.feature"
           :disabled="form.edit"
           >
         </el-input>
@@ -73,11 +81,11 @@
             :rows="5"
             placeholder="请输入备注信息"
             v-model="form.remarks"
-            :disabled="form.edit"
+            :disabled="edit"
             >
           </el-input>
       </div>
-      <div class="btn" v-if="!form.edit">
+      <div class="btn" v-if="!edit">
           <el-button type="info">返回</el-button>
           <el-button type="primary" @click='save'>保存</el-button>
       </div>
@@ -88,6 +96,12 @@
   export default{
     props:{
       form:{
+      },
+      edit:{
+        type:Boolean,
+        default:function(){
+          return false
+        }
       }
     },
     data(){
@@ -99,56 +113,33 @@
           value: '2',
           label: '已领取'
         }],
-        value4: '1',
-        imageUrl:''
+        imageUrl:'',
+        date:new Date()
       }
     },
     methods:{
       handleAvatarSuccess(res, file) {
-        this.imageUrl = URL.createObjectURL(file.raw);
+        this.form.pic = URL.createObjectURL(file.raw);
       },
       save(){
-        console.log(this.form.date.getFullYear());
-        let { date,
-              id,
-              name,
-              pic,
-              type,
-              address,
-              goodsname,
-              feature,
-              state,
-              phone,
-              remarks}=this.form;
-        console.log({ date,
-              id,
-              name,
-              pic,
-              type,
-              address,
-              goodsname,
-              feature,
-              state,
-              phone,
-              remarks})
-        // axios.post("/user/addGoods", { userId, pwd }).then(res => {
-        //   console.log(res);
-        //   if (res.status == 200 && res.data.code == 0) {
-        //     this.$message({
-        //       message: "登陆成功",
-        //       type: "success",
-        //       center: "true"
-        //     });
-        //     this.$router.push({ path: "/index" });
-        //   } else {
-        //     this.$message({
-        //       message: res.data.msg,
-        //       type: "error",
-        //       center: "true"
-        //     });
-        //   }
-        // });
+        let year=this.date.getFullYear();
+        let month=this.date.getMonth()+1;
+        let day=this.date.getDate();
+        this.form.date=''+year+'-'+month+'-'+day+'';
+        this.$emit('save',this.form);
       }
+    },
+    beforeMount() {
+      if(!this.$cookies.get("username")){
+        this.$message({
+                message: "请登陆后再进行访问",
+                type: "error",
+                center: "true"
+              });
+        this.$router.push({path:"login"});
+      }
+      this.form.id=this.$cookies.get("userid");
+      this.form.name = this.$cookies.get("username");
     }
   }
 
@@ -178,14 +169,14 @@
     .radio{
       padding-left:6px; 
     }
-    /* .el-input.is-disabled .el-input__inner{
+    .el-input.is-disabled .el-input__inner{
       color: #409EFF;
     }
     .el-radio__input.is-disabled.is-checked .el-radio__inner::after {
       background-color: #409EFF;
       width: 6px;
       height: 6px;
-    } */
+    }
     .el-textarea{
       width: 70%;
     }
@@ -210,9 +201,12 @@
     line-height: 178px;
     text-align: center;
   }
-  .avatar {
+  .item{
+     .avatar {
     width: 178px;
     height: 178px;
     display: block;
+    } 
   }
+
 </style>

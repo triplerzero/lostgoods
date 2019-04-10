@@ -9,13 +9,13 @@ const models={
   user:{
     userId:{type:'String',require:'true'},
     userName:{type:'String',require:'true'},
-    sex:{type:'Number',require:'true'},
+    sex:{type:'String',require:'true'},
     pwd:{type:'String',require:'true'}
   },
   admin:{
     adminId:{type:'String',require:'true'},
     adminName:{type:'String',require:'true'},
-    sex:{type:'Number',require:'true'},
+    sex:{type:'String',require:'true'},
     pwd:{type:'String',require:'true'}
   },
   goods:{
@@ -23,13 +23,13 @@ const models={
     id:{type:'String'},
     name:{type:'String'},
     pic:{type:'String'},
-    type:{type:'Number'},
-    gooodsname:{type:'String',require:'true'},
+    type:{type:'String'},
+    goodsname:{type:'String',require:'true'},
     feature:{type:'String',require:'true'},
     address:{type:'String',require:'true'},
     phone:{type:'String',require:'true'},
     remarks:{type:'String'},
-    state:{type:'Number'}
+    state:{type:'String'}
   }
 }
 

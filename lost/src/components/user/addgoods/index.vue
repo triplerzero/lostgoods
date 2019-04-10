@@ -37,7 +37,7 @@
         </el-header>
         <div class="main">
         <el-main>
-            <input-text :form='form'></input-text>
+            <input-text :form='form' @save='save'></input-text>
         </el-main>
         </div>
       </el-container>
@@ -47,33 +47,26 @@
   
   <script>
   import inputText from '../../common/input';
+  import axios from "axios";
   export default {
     data() {
       return {
+        userid:'',
         username: '',
-        tableData:'',
         index:'2-2',
-        goodsname:'折叠伞',
-        feature:'',
-        edit:false,
-        type:'失物',
-        radio:'1',
         form:{
-          date:'',
-          id:'',
+          date:new Date(),
+          id:this.userid,
           name:'',
           pic:'',
-          type:1,
+          type:'1',
           address:'',
           goodsname:'',
           feature:'',
-          state:1,
+          state:'1',
           phone:'',
           remarks:'',
-          edit:false,
-          save:function(){
-            console.log(2323)
-          }
+          edit:false
         }
     }
   },
@@ -84,10 +77,27 @@
         handleClick(row) {
           console.log(row);
         },
+        save(item){
+        axios.post("/user/addGoods", item).then(res => {
+          console.log(res);
+          if (res.status == 200 && res.data.code == 0) {
+            this.$message({
+              message: "添加成功",
+              type: "success",
+              center: "true"
+            });
+          } else {
+            this.$message({
+              message: res.data.msg,
+              type: "error",
+              center: "true"
+            });
+          }
+        });
+        }
 
   },
     beforeMount() {
-      this.username = this.$cookies.get("username");
       if(!this.$cookies.get("username")){
         this.$message({
                 message: "请登陆后再进行访问",
@@ -96,23 +106,11 @@
               });
         this.$router.push({path:"login"});
       }
-      
+      this.userid=this.$cookies.get("userid");
+      this.username = this.$cookies.get("username");
+      console.log(this.userid);
     },
     created(){
-      const item = {
-            date: '2016-05-02',
-            name: '王小虎',
-            type:'失物招领',
-            address: '北街到综B的路途中',
-            goodsname:'折叠伞',
-            feature:'浅蓝色/带花纹',
-            phone:'13800000000',
-            remarks:'想取回失物请拨打联系电话13800000000联系拾主与约定时间地点取回',
-            details:function(item){
-              console.log(item);
-            }
-          }
-          this.tableData=Array(20).fill(item)
     },
     components:{
       inputText
