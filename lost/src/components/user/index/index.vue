@@ -36,9 +36,10 @@
         </div>
       </el-header>
       <div class="search">
-          <el-input v-model="goodsname" placeholder="物品名称"></el-input>
-          <el-input v-model="feature" placeholder="物品特征"></el-input>
-          <el-button type="primary">搜索</el-button>
+          <el-input v-model="searchData.goodsname" placeholder="物品名称"></el-input>
+          <el-input v-model="searchData.feature" placeholder="物品特征"></el-input>
+          <el-input v-model="searchData.address" placeholder="地点"></el-input>
+          <el-button type="primary" @click="handleSearch">搜索</el-button>
       </div>
       <div class="tab">
           <el-tabs v-model="activeName" @tab-click="handleTab">
@@ -71,7 +72,7 @@
           </el-table-column>
           <el-table-column prop="feature" label="物品特征">
           </el-table-column>
-          <el-table-column prop="address" label="丢失地点">
+          <el-table-column prop="address" label="地点">
           </el-table-column>
           <el-table-column prop="phone" label="联系方式">
           </el-table-column>
@@ -106,7 +107,7 @@ export default {
       index:'1-1',
       goodsname:'',
       feature:'',
-      activeName: 'second',
+      activeName: 'first',
       type:{
         "1":"失物招领",
         "2":"寻物启事"
@@ -114,22 +115,53 @@ export default {
       status:{
         "1":"未领取",
         "2":"已领取"
+      },
+      searchData:{
+        goodsname:'',
+        feature:'',
+        address:''
       }
   }
 },
 methods: {
+      //导航栏
       handleSelect(key, keyPath) {
         console.log(key, keyPath);
         if(key==='2-2'){
             this.$router.push({path:"user/addgoods"})
           }
       },
+      //带参数跳转
       handleClick(row) {
         console.log(row);
         this.$router.push({path:"goods/goodsdetails",query:{id:row._id}});
       },
+      //tab栏
       handleTab(tab, event) {
-        console.log(tab);
+        let params={type:tab.index};
+        this.getData(params);
+
+      },
+      //搜索
+      handleSearch(){
+        axios.get('/user/getGoodsList',{
+        params:{
+          goodsname:this.searchData.goodsname
+        }}).then(res=>{
+          if(res){
+            let data=res.data.data;
+            this.tableData=data;
+          }
+        })
+      },
+      getData(params){
+        axios.get('/user/getGoodsList',{params}).then(res=>{
+          if(res){
+            console.log(res);
+            let data=res.data.data;
+            this.tableData=data;
+          }
+        })       
       }
 },
   beforeMount() {

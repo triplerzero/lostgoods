@@ -103,6 +103,7 @@ Router.post('/addGoods',(req,res)=>{
 })
 //获取失物列表信息
 Router.get('/getGoodsList',(req,res)=>{
+  if(JSON.stringify(req.query) == "{}"||req.query.type=="0"){
   Goods.find({},(err,doc)=>{
     if (!doc) {
       return res.json({
@@ -116,6 +117,43 @@ Router.get('/getGoodsList',(req,res)=>{
       })
     }
   })
+}
+else{
+  if(req.query.type){
+    Goods.find({
+      type:req.query.type
+    },(err,doc)=>{
+      if (!doc) {
+        return res.json({
+          code: 1,
+          msg: '没有数据返回'
+        })
+      }else{
+        return res.json({
+          code: 0,
+          data: doc
+        })
+      }
+    })
+  }else{
+    Goods.find({
+      // goodsname:goodsname:{$regex:/'+req.query.goodsname+'/}
+      goodsname:{$regex:req.query.goodsname}
+    },(err,doc)=>{
+      if (!doc) {
+        return res.json({
+          code: 1,
+          msg: '没有数据返回'
+        })
+      }else{
+        return res.json({
+          code: 0,
+          data: doc
+        })
+      }
+    })  
+  }
+}
 })
 //获取失物列表信息
 Router.get('/getGoodsDetail',(req,res)=>{

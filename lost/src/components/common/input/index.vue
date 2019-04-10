@@ -32,7 +32,7 @@
           v-model="date"
           type="datetime"
           placeholder="选择日期时间"
-          :disabled="form.edit"
+          :disabled="edit"
           >
         </el-date-picker>
       </div>
@@ -70,7 +70,7 @@
           :rows="5"
           placeholder="请输入物品特征"
           v-model="form.feature"
-          :disabled="form.edit"
+          :disabled="edit"
           >
         </el-input>
       </div>
