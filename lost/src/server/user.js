@@ -10,6 +10,8 @@ const Admin=db.getModel('admin');
 const Goods=db.getModel('goods');
 //引入加密中间件
 const utils = require('utility');
+//引入图片上传中间件
+const multer=require('multer')
 
 //查看user表中所有数据
 // Router.get('/list',(req,res)=>{
@@ -172,6 +174,16 @@ Router.get('/getGoodsDetail',(req,res)=>{
       })
     }   
   })
+})
+
+//图片上传
+let upload=multer({dest:'./public/img'}).any()
+Router.post('/uploadImg',upload,(req,res)=>{
+  return res.json({
+    code: 0,
+    data: {}
+  })
+  console.log(req.files);
 })
 
 module.exports = Router;

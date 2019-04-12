@@ -17,7 +17,7 @@
         <div class="text"><label>物品图片:</label></div>
         <el-upload
         class="avatar-uploader"
-        action="https://jsonplaceholder.typicode.com/posts/"
+        action="/user/uploadImg"
         :show-file-list="false"
         :on-success="handleAvatarSuccess"
         :disabled="edit"
@@ -119,6 +119,7 @@
     },
     methods:{
       handleAvatarSuccess(res, file) {
+        console.log(file)
         this.form.pic = URL.createObjectURL(file.raw);
       },
       save(){
