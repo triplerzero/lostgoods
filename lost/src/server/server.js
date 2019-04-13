@@ -20,4 +20,5 @@ app.use('/user',require('./user'));
 //引用路由
 app.use('/api',apiRouter);
 //开端口
+app.use(express.static('public'))
 app.listen(3001);

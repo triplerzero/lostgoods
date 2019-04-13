@@ -79,13 +79,13 @@
         },
         save(item){
         axios.post("/user/addGoods", item).then(res => {
-          console.log(res);
           if (res.status == 200 && res.data.code == 0) {
             this.$message({
               message: "添加成功",
               type: "success",
               center: "true"
             });
+            this.$router.push({path:'/index'})
           } else {
             this.$message({
               message: res.data.msg,
@@ -95,7 +95,6 @@
           }
         });
         }
-
   },
     beforeMount() {
       if(!this.$cookies.get("username")){
@@ -108,7 +107,6 @@
       }
       this.userid=this.$cookies.get("userid");
       this.username = this.$cookies.get("username");
-      console.log(this.userid);
     },
     created(){
     },

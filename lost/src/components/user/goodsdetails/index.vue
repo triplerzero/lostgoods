@@ -38,7 +38,7 @@
         </el-header>
         <div class="main">
         <el-main>
-            <input-text :form='form' :edit='edit'></input-text>
+            <input-text :form='form' :edit='edit' @save="save"></input-text>
         </el-main>
         </div>
       </el-container>
@@ -54,14 +54,13 @@
       return {
         username: '',
         index:'1-2',
-        edit:true,
+        edit:false,
         form:{
-          goodsname:'折叠伞',
+          goodsname:'',
           feature:'',
-          edit:true,
-          type:'失物',
+          type:'',
           radio:'1',
-          name:'王大锤',
+          name:'',
           date: new Date()
         }
     }
@@ -72,6 +71,24 @@
         },
         handleClick(row) {
           console.log(row);
+        },
+        save(item){
+        axios.post("/user/updateGoods", item).then(res => {
+          if (res.status == 200 && res.data.code == 0) {
+            this.$message({
+              message: "更新成功",
+              type: "success",
+              center: "true"
+            });
+            this.$router.push({path:'/user/goodslist'})
+          } else {
+            this.$message({
+              message: res.data.msg,
+              type: "error",
+              center: "true"
+            });
+          }
+        });
         }
   },
     beforeMount() {
@@ -88,8 +105,13 @@
     },
     created(){
       let query=this.$route.query.id;
+      let edit=this.$route.query.edit;
+      if (edit==1){
+        this.edit=false;
+      }else{
+        this.edit=true;
+      }
       axios.get('/user/getGoodsDetail?id='+query+'').then(res=>{
-        console.log(res);
         this.form=res.data.data;
       })
     },

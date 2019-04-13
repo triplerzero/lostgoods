@@ -3,7 +3,7 @@
   <el-container style="height: 740px; border: 1px solid #eee">
     <div class="aside">
         <el-aside width="200px" style="background-color: #eee">
-            <el-menu :default-openeds="['1', '3']" :default-active="index" @select="handleSelect">
+            <el-menu :default-openeds="['2']" :default-active="index" @select="handleSelect">
               <div class="logo">
               </div>
               <el-submenu index="1">
@@ -35,20 +35,7 @@
           <span>{{name}}</span>
         </div>
       </el-header>
-      <div class="search">
-          <el-input v-model="searchData.goodsname" placeholder="物品名称"></el-input>
-          <el-input v-model="searchData.feature" placeholder="物品特征"></el-input>
-          <el-input v-model="searchData.address" placeholder="地点"></el-input>
-          <el-button type="primary" @click="handleSearch">搜索</el-button>
-      </div>
-      <div class="tab">
-          <el-tabs v-model="activeName" @tab-click="handleTab">
-              <el-tab-pane label="全部" name="first"></el-tab-pane>
-              <el-tab-pane label="失物招领" name="second"></el-tab-pane>
-              <el-tab-pane label="寻物启事" name="third"></el-tab-pane>
-          </el-tabs>
-      </div>
-      <div class="main">
+      <div class="goodsLidtMain">
       <el-main>
         <el-table :data="tableData" stripe>
           <el-table-column prop="goodsname" label="物品">
@@ -85,8 +72,8 @@
           </el-table-column>
           <el-table-column prop="details" label="操作"> 
               <template slot-scope="scope">
-                  <el-button @click="handleClick(scope.row)" type="text" size="small">详情</el-button>
-                  <!-- <el-button type="text" size="small">编辑</el-button> -->
+                  <el-button @click="handleClick(scope.row)" type="text" size="small">编辑</el-button>
+                  <el-button type="text" size="small" @click="handleDelete(scope.row)">删除</el-button>
               </template>
           </el-table-column>
         </el-table>
@@ -103,8 +90,9 @@ export default {
   data() {
     return {
       name: '',
+      id:'',
       tableData:[],
-      index:'1-1',
+      index:'2-3',
       goodsname:'',
       feature:'',
       activeName: 'first',
@@ -143,8 +131,31 @@ methods: {
       },
       //带参数跳转
       handleClick(row) {
-        console.log(row);
-        this.$router.push({path:"goods/goodsdetails",query:{id:row._id}});
+        this.$router.push({path:"/goods/goodsdetails",query:{id:row._id,edit:1}});
+      },
+      //删除失物
+      handleDelete(row){
+        this.$confirm('此操作将永久删除失物信息, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+            axios.post('/user/deleteGoods',
+            {_id:row._id}
+          ).then(res=>{
+            this.getData();
+            console.log(res);
+            this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
       },
       //tab栏
       handleTab(tab, event) {
@@ -164,18 +175,19 @@ methods: {
           }
         })
       },
-      getData(params){
-        axios.get('/user/getGoodsList',{params}).then(res=>{
+      getData(){
+        axios.get('/user/getGoodsList',{
+        params:{
+          userId:this.id
+        }}).then(res=>{
           if(res){
-            console.log(res);
-            let data=res.data.data;
+            let data=res.data.data.reverse();
             this.tableData=data;
           }
         })       
       }
 },
-  beforeMount() {
-    this.name = this.$cookies.get("username");
+  beforeCreated() {
     if(!this.$cookies.get("username")){
       this.$message({
               message: "请登陆后再进行访问",
@@ -187,17 +199,17 @@ methods: {
     
   },
   created(){
-    axios.get('/user/getGoodsList').then(res=>{
-      if (res.status == 200 && res.data.code == 0) {
-        let data=res.data.data.reverse();
-        this.tableData=data;
-      }
-    })
+      this.name = this.$cookies.get("username");
+      this.id=this.$cookies.get("userid");
+      this.getData()
   }
 };
 </script>
 
 <style lang="less">
+    body{
+      background: f5f5f5;
+    }
     .logo{
       background: #66b1ff;
       width: 180px;
@@ -257,12 +269,13 @@ methods: {
       position: relative;
       overflow: hidden;
     }
-    .main{
+    .goodsLidtMain{
       width: 100%;
       height: 100%;
       position: relative;
       overflow: hidden; 
       background: #f5f5f5;
+      margin-top: 20px;
     }
     .el-aside,.el-main {
       color: #333;
@@ -275,7 +288,7 @@ methods: {
       overflow-y: scroll;
     }
     .el-main{
-      padding:0 20px 20px;
+      padding:20px 20px ;
     }
     .el-table .cell{
       text-overflow: -o-ellipsis-lastline;

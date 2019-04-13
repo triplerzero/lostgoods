@@ -17,14 +17,15 @@
         <div class="text"><label>物品图片:</label></div>
         <el-upload
         class="avatar-uploader"
-        action="/user/uploadImg"
+        action=""
         :show-file-list="false"
-        :on-success="handleAvatarSuccess"
         :disabled="edit"
+        :http-request="uploadImg"
         >
         <img v-if="form.pic" :src="form.pic" class="avatar">
         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
+        <label for="file" class="filelabel"></label>
       </div>
       <div class="item">
           <div class="text"><label>丢失/拾取时间:</label></div>
@@ -89,20 +90,17 @@
           <el-button type="info">返回</el-button>
           <el-button type="primary" @click='save'>保存</el-button>
       </div>
+      <input type="file" @change="upload" ref="upload" id="file" name="file" accept="image/*" class="file">
     </div>
 </template>
 
 <script>
+  import axios from 'axios';
   export default{
     props:{
       form:{
       },
-      edit:{
-        type:Boolean,
-        default:function(){
-          return false
-        }
-      }
+      edit:false
     },
     data(){
       return {
@@ -118,9 +116,20 @@
       }
     },
     methods:{
-      handleAvatarSuccess(res, file) {
-        console.log(file)
-        this.form.pic = URL.createObjectURL(file.raw);
+      upload(){
+        var formData = new FormData();
+        formData.append('file',this.$refs.upload.files[0]);
+        console.log(formData.getAll('file'))
+        axios.post('/user/uploadImg',formData,
+        { anync:true,
+          contentType:false,
+          processData:false}).then(res=>{
+          let url="img/";
+          this.form.pic=''+url+''+res.data.data[0].filename+'';
+        })
+      },
+      uploadImg(){
+
       },
       save(){
         let year=this.date.getFullYear();
@@ -141,6 +150,8 @@
       }
       this.form.id=this.$cookies.get("userid");
       this.form.name = this.$cookies.get("username");
+    },
+    created(){
     }
   }
 
@@ -203,11 +214,24 @@
     text-align: center;
   }
   .item{
-     .avatar {
+    position: relative;
+    .avatar {
     width: 178px;
     height: 178px;
     display: block;
     } 
+    .filelabel{
+      display: block;
+      width: 178px;
+      height: 178px;
+      position: absolute;
+      left: 211px;
+      bottom: 5px;
   }
+  }
+  .file{
+    display: none;
+  }
+
 
 </style>

@@ -105,6 +105,24 @@ Router.post('/addGoods',(req,res)=>{
 })
 //获取失物列表信息
 Router.get('/getGoodsList',(req,res)=>{
+  if(req.query.userId){
+    Goods.find({
+      id:req.query.userId
+    },(err,doc)=>{
+      if (!doc) {
+        return res.json({
+          code: 1,
+          msg: '没有数据返回'
+        })
+      }else{
+        return res.json({
+          code: 0,
+          data: doc,
+          message:"学生失物记录"
+        })
+      }
+    })
+  }
   if(JSON.stringify(req.query) == "{}"||req.query.type=="0"){
   Goods.find({},(err,doc)=>{
     if (!doc) {
@@ -118,7 +136,7 @@ Router.get('/getGoodsList',(req,res)=>{
         data: doc
       })
     }
-  })
+  }).sort({KEY:-1})
 }
 else{
   if(req.query.type){
@@ -137,7 +155,8 @@ else{
         })
       }
     })
-  }else{
+  }
+    if(req.query.goodsname){
     Goods.find({
       // goodsname:goodsname:{$regex:/'+req.query.goodsname+'/}
       goodsname:{$regex:req.query.goodsname}
@@ -181,9 +200,63 @@ let upload=multer({dest:'./public/img'}).any()
 Router.post('/uploadImg',upload,(req,res)=>{
   return res.json({
     code: 0,
-    data: {}
+    data: req.files
   })
-  console.log(req.files);
+})
+
+//删除失物
+Router.post('/deleteGoods',(req,res)=>{
+  Goods.remove({
+    _id:req.body._id
+  },(err,doc)=>{
+    if (!doc) {
+      return res.json({
+        code: 1,
+        msg: '删除失败'
+      })
+    }else{
+      return res.json({
+        code: 0,
+        message: '删除成功',
+        data:doc
+      })
+    }  
+  })
+})
+//更新失物信息
+Router.post('/updateGoods',(req,res)=>{
+  Goods.update(
+    {
+      "id":req.body.id
+    }, {
+      $set:{
+        "id":req.body.id,
+        "date":req.body.date,
+        "name":req.body.name,
+        "pic":req.body.pic,
+        "type":req.body.type,
+        "goodsname":req.body.goodsname,
+        "feature":req.body.feature,
+        "address":req.body.address,
+        "phone":req.body.phone,
+        "remarks":req.body.remarks,
+        "state":req.body.state
+      }
+    }
+    ,(err,doc)=>{
+      if (!doc) {
+        return res.json({
+          code: 1,
+          msg: '更新失败'
+        })
+      }else{
+        return res.json({
+          code: 0,
+          message: '更新成功',
+          data:doc
+        })
+      }  
+  })
 })
 
 module.exports = Router;
