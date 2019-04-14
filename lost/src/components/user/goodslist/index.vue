@@ -17,7 +17,7 @@
                 <el-menu-item-group>
                     <el-menu-item index="2-1">个人信息</el-menu-item>
                     <el-menu-item index="2-2">新增失物</el-menu-item>
-                    <el-menu-item index="2-3">失物记录</el-menu-item>
+                    <el-menu-item index="2-3">发布记录</el-menu-item>
                   </el-menu-item-group>
               </el-submenu>
             </el-menu>
@@ -31,7 +31,7 @@
         </div>
         <div class="tips">温馨提示：请丢失物品或拾取到物品的同学到综B一楼失物管理处交接物品，或者主动在该网站发布相关物品信息</div>
         <div class="avatar">
-          <img src="../src/zhemu.jpg" alt="">
+          <img src="../../src/zhemu.jpg" alt="">
           <span>{{name}}</span>
         </div>
       </el-header>
@@ -214,7 +214,7 @@ methods: {
       background: #66b1ff;
       width: 180px;
       height: 80px;
-      background-image: url("../src/lost.jpg");
+      background-image: url("../../src/lost.jpg");
       background-size:100% 100%;
     }
     .tips{

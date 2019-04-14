@@ -105,6 +105,21 @@ Router.post('/addGoods',(req,res)=>{
 })
 //获取失物列表信息
 Router.get('/getGoodsList',(req,res)=>{
+  if(JSON.stringify(req.query) == "{}"){
+    Goods.find({},(err,doc)=>{
+      if (!doc) {
+        return res.json({
+          code: 1,
+          msg: '没有数据返回'
+        })
+      }else{
+        return res.json({
+          code: 0,
+          data: doc
+        })
+      }
+    })
+  }
   if(req.query.userId){
     Goods.find({
       id:req.query.userId
@@ -118,48 +133,53 @@ Router.get('/getGoodsList',(req,res)=>{
         return res.json({
           code: 0,
           data: doc,
-          message:"学生失物记录"
+          message:"学生发布记录"
         })
       }
     })
   }
-  if(JSON.stringify(req.query) == "{}"||req.query.type=="0"){
-  Goods.find({},(err,doc)=>{
-    if (!doc) {
-      return res.json({
-        code: 1,
-        msg: '没有数据返回'
-      })
-    }else{
-      return res.json({
-        code: 0,
-        data: doc
+  if(req.query.type){
+    if(req.query.type=="0"){
+      Goods.find({},(err,doc)=>{
+        if (!doc) {
+          return res.json({
+            code: 1,
+            msg: '没有数据返回'
+          })
+        }else{
+          return res.json({
+            code: 0,
+            data: doc
+          })
+        }
       })
     }
-  }).sort({KEY:-1})
-}
-else{
-  if(req.query.type){
-    Goods.find({
-      type:req.query.type
-    },(err,doc)=>{
-      if (!doc) {
-        return res.json({
-          code: 1,
-          msg: '没有数据返回'
-        })
-      }else{
-        return res.json({
-          code: 0,
-          data: doc
-        })
-      }
-    })
+    else{
+      Goods.find({
+        type:req.query.type
+      },(err,doc)=>{
+        if (!doc) {
+          return res.json({
+            code: 1,
+            msg: '没有数据返回'
+          })
+        }else{
+          return res.json({
+            code: 0,
+            data: doc
+          })
+        }
+      })
+    }
   }
-    if(req.query.goodsname){
+  if(req.query.goodsname||req.query.feature||req.query.address){
+    if(req.query.stype=="0"){
     Goods.find({
-      // goodsname:goodsname:{$regex:/'+req.query.goodsname+'/}
-      goodsname:{$regex:req.query.goodsname}
+      $and:[
+        { goodsname:{$regex:req.query.goodsname}},
+        { feature:{$regex:req.query.feature}},
+        { address:{$regex:req.query.address}}
+      ]
     },(err,doc)=>{
       if (!doc) {
         return res.json({
@@ -173,6 +193,28 @@ else{
         })
       }
     })  
+  }
+  else{
+    Goods.find({
+      $and:[
+        { goodsname:{$regex:req.query.goodsname}},
+        { feature:{$regex:req.query.feature}},
+        { address:{$regex:req.query.address}},
+        { type:req.query.stype }
+      ]
+    },(err,doc)=>{
+      if (!doc) {
+        return res.json({
+          code: 1,
+          msg: '没有数据返回'
+        })
+      }else{
+        return res.json({
+          code: 0,
+          data: doc
+        })
+      }
+    })   
   }
 }
 })
@@ -240,7 +282,9 @@ Router.post('/updateGoods',(req,res)=>{
         "address":req.body.address,
         "phone":req.body.phone,
         "remarks":req.body.remarks,
-        "state":req.body.state
+        "state":req.body.state,
+        "receivername":req.body.receivername,
+        "receiverphone":req.body.receiverphone
       }
     }
     ,(err,doc)=>{

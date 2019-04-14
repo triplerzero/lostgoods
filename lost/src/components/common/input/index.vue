@@ -64,6 +64,14 @@
               </el-option>
             </el-select>
       </div>
+      <div class="item" v-if="form.state=='2'">
+        <div class="text"><label>领取人姓名:</label></div>
+        <el-input v-model="form.receivername" placeholder="领取人姓名":disabled="edit"></el-input>
+      </div>
+      <div class="item" v-if="form.state=='2'">
+        <div class="text"><label>领取人联系方式:</label></div>
+        <el-input v-model="form.receiverphone" placeholder="领取人联系方式":disabled="edit"></el-input>
+      </div>
       <div class="item">
           <div class="text"><label>物品特征:</label></div>
           <el-input

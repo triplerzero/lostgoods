@@ -29,7 +29,9 @@ const models={
     address:{type:'String',require:'true'},
     phone:{type:'String',require:'true'},
     remarks:{type:'String'},
-    state:{type:'String'}
+    state:{type:'String'},
+    receivername:{type:'String'},
+    receiverphone:{type:'string'}
   }
 }
 
