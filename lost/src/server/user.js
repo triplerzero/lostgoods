@@ -218,7 +218,7 @@ Router.get('/getGoodsList',(req,res)=>{
   }
 }
 })
-//获取失物列表信息
+//获取失物详情信息
 Router.get('/getGoodsDetail',(req,res)=>{
   Goods.findOne({
     _id:req.query.id
@@ -269,10 +269,10 @@ Router.post('/deleteGoods',(req,res)=>{
 Router.post('/updateGoods',(req,res)=>{
   Goods.update(
     {
-      "id":req.body.id
+      "_id":req.body._id
     }, {
       $set:{
-        "id":req.body.id,
+        "_id":req.body._id,
         "date":req.body.date,
         "name":req.body.name,
         "pic":req.body.pic,

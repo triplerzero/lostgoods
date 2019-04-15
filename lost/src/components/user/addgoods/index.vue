@@ -27,7 +27,7 @@
       <el-container>
         <el-header style="text-align: right; font-size: 12px">
           <div class="nav">
-            <span>失物</span> > <span class="lost">失物详情</span>
+            <span>失物</span> > <span class="lost">新增失物</span>
           </div>
           <div class="tips">温馨提示：请丢失物品或拾取到物品的同学到综B一楼失物管理处交接物品，或者主动在该网站发布相关物品信息</div>
           <div class="avatar">

@@ -1,99 +1,99 @@
 <template>
-  <div class="index">
-  <el-container style="height: 740px; border: 1px solid #eee">
-    <div class="aside">
-        <el-aside width="200px" style="background-color: #eee">
-            <el-menu :default-openeds="['1', '3']" :default-active="index" @select="handleSelect">
-              <div class="logo">
-              </div>
-              <el-submenu index="1">
-                <template slot="title"><i class="el-icon-message"></i>失物管理</template>
-                <el-menu-item-group>
-                  <el-menu-item index="1-1">失物信息</el-menu-item>
-                </el-menu-item-group>
-              </el-submenu>
-              <el-submenu index="2">
-                <template slot="title"><i class="el-icon-menu"></i>个人中心</template>
-                <el-menu-item-group>
-                    <el-menu-item index="2-1">个人信息</el-menu-item>
-                    <el-menu-item index="2-2">新增失物</el-menu-item>
-                    <el-menu-item index="2-3">发布记录</el-menu-item>
-                  </el-menu-item-group>
-              </el-submenu>
-            </el-menu>
-          </el-aside>
-    </div>
-
-    <el-container>
-      <el-header style="text-align: right; font-size: 12px">
-        <div class="nav">
-          <span>失物</span> > <span class="lost">失物信息</span>
-        </div>
-        <div class="tips">温馨提示：请丢失物品或拾取到物品的同学到综B一楼失物管理处交接物品，或者主动在该网站发布相关物品信息</div>
-        <div class="avatar">
-          <img src="../../src/zhemu.jpg" alt="">
-          <span>{{name}}</span>
-        </div>
-      </el-header>
-      <div class="search">
-          <el-input v-model="searchData.goodsname" placeholder="物品名称"></el-input>
-          <el-input v-model="searchData.feature" placeholder="物品特征"></el-input>
-          <el-input v-model="searchData.address" placeholder="地点"></el-input>
-          <el-button type="primary" @click="handleSearch">搜索</el-button>
-      </div>
-      <div class="tab">
-          <el-tabs v-model="activeName" @tab-click="handleTab">
-              <el-tab-pane label="全部" name="first"></el-tab-pane>
-              <el-tab-pane label="失物招领" name="second"></el-tab-pane>
-              <el-tab-pane label="寻物启事" name="third"></el-tab-pane>
-          </el-tabs>
-      </div>
-      <div class="main">
-      <el-main>
-        <el-table :data="tableData" stripe>
-          <el-table-column prop="goodsname" label="物品">
-              <template slot-scope="scope">
-                <div class="goods_msg">
-                  <img :src="scope.row.pic" class="goods_pic"/>
-                  <span class="goods_name">{{scope.row.goodsname}}</span>
+  <div class="index" style="position:fixed;top:0;bottom:0;left:0;width:100%;">
+    <el-container style="height: 100%; border: 1px solid #eee">
+      <div class="aside">
+          <el-aside width="200px" style="background-color: #eee">
+              <el-menu :default-openeds="['1', '3']" :default-active="index" @select="handleSelect">
+                <div class="logo">
                 </div>
-              </template>
-          </el-table-column>
-          <el-table-column prop="date" label="丢失/拾取时间">
-          </el-table-column>
-          <el-table-column prop="id" label="发布人学号">
-          </el-table-column>
-          <el-table-column prop="name" label="发布人姓名">
-          </el-table-column>
-          <el-table-column prop="type" label="发布类型">
-              <template slot-scope="scope">
-                <span>{{type[scope.row.type]}}</span> 
-              </template>
-          </el-table-column>
-          <el-table-column prop="feature" label="物品特征">
-          </el-table-column>
-          <el-table-column prop="address" label="地点">
-          </el-table-column>
-          <el-table-column prop="phone" label="联系方式">
-          </el-table-column>
-          <el-table-column prop="remarks" label="备注"> 
-          </el-table-column>
-          <el-table-column prop="state" label="失物状态"> 
-              <template slot-scope="scope">
-                  <span>{{status[scope.row.state]}}</span> 
-                </template>
-          </el-table-column>
-          <el-table-column prop="details" label="操作"> 
-              <template slot-scope="scope">
-                  <el-button @click="handleClick(scope.row)" type="text" size="small">详情</el-button>
-                  <!-- <el-button type="text" size="small">编辑</el-button> -->
-              </template>
-          </el-table-column>
-        </el-table>
-      </el-main>
+                <el-submenu index="1">
+                  <template slot="title"><i class="el-icon-message"></i>失物管理</template>
+                  <el-menu-item-group>
+                    <el-menu-item index="1-1">失物信息</el-menu-item>
+                  </el-menu-item-group>
+                </el-submenu>
+                <el-submenu index="2">
+                  <template slot="title"><i class="el-icon-menu"></i>个人中心</template>
+                  <el-menu-item-group>
+                      <el-menu-item index="2-1">个人信息</el-menu-item>
+                      <el-menu-item index="2-2">新增失物</el-menu-item>
+                      <el-menu-item index="2-3">发布记录</el-menu-item>
+                    </el-menu-item-group>
+                </el-submenu>
+              </el-menu>
+            </el-aside>
       </div>
+
+      <el-container>
+        <el-header style="text-align: right; font-size: 12px">
+          <div class="nav">
+            <span>失物</span> > <span class="lost">失物信息</span>
+          </div>
+          <div class="tips">温馨提示：请丢失物品或拾取到物品的同学到综B一楼失物管理处交接物品，或者主动在该网站发布相关物品信息</div>
+          <div class="avatar">
+            <img src="../../src/zhemu.jpg" alt="">
+            <span>{{name}}</span>
+          </div>
+        </el-header>
+        <div class="search">
+            <el-input v-model="searchData.goodsname" placeholder="物品名称"></el-input>
+            <el-input v-model="searchData.feature" placeholder="物品特征"></el-input>
+            <el-input v-model="searchData.address" placeholder="地点"></el-input>
+            <el-button type="primary" @click="handleSearch">搜索</el-button>
+        </div>
+        <div class="tab">
+            <el-tabs v-model="activeName" @tab-click="handleTab">
+                <el-tab-pane label="全部" name="first"></el-tab-pane>
+                <el-tab-pane label="失物招领" name="second"></el-tab-pane>
+                <el-tab-pane label="寻物启事" name="third"></el-tab-pane>
+            </el-tabs>
+        </div>
+        <div class="main">
+        <el-main>
+          <el-table :data="tableData" stripe  height="100%">
+            <el-table-column prop="goodsname" label="物品">
+                <template slot-scope="scope">
+                  <div class="goods_msg">
+                    <img :src="scope.row.pic" class="goods_pic"/>
+                    <span class="goods_name">{{scope.row.goodsname}}</span>
+                  </div>
+                </template>
+            </el-table-column>
+            <el-table-column prop="date" label="丢失/拾取时间">
+            </el-table-column>
+            <el-table-column prop="id" label="发布人学号">
+            </el-table-column>
+            <el-table-column prop="name" label="发布人姓名">
+            </el-table-column>
+            <el-table-column prop="type" label="发布类型">
+                <template slot-scope="scope">
+                  <span>{{type[scope.row.type]}}</span> 
+                </template>
+            </el-table-column>
+            <el-table-column prop="feature" label="物品特征">
+            </el-table-column>
+            <el-table-column prop="address" label="地点">
+            </el-table-column>
+            <el-table-column prop="phone" label="联系方式">
+            </el-table-column>
+            <el-table-column prop="remarks" label="备注"> 
+            </el-table-column>
+            <el-table-column prop="state" label="失物状态"> 
+                <template slot-scope="scope">
+                    <span>{{status[scope.row.state]}}</span> 
+                  </template>
+            </el-table-column>
+            <el-table-column prop="details" label="操作"> 
+                <template slot-scope="scope">
+                    <el-button @click="handleClick(scope.row)" type="text" size="small">详情</el-button>
+                    <!-- <el-button type="text" size="small">编辑</el-button> -->
+                </template>
+            </el-table-column>
+          </el-table>
+        </el-main>
+        </div>
+      </el-container>
     </el-container>
-  </el-container>
 </div>
 </template>
 
@@ -263,7 +263,6 @@ methods: {
     }
     .aside{
       width: 180px;
-      height: 100%;
       position: relative;
       overflow: hidden;
     }

@@ -144,7 +144,7 @@ methods: {
       },
       //带参数跳转
       handleClick(row) {
-        this.$router.push({path:"goods/goodsdetails",query:{id:row._id,edit:1}});
+        this.$router.push({path:"goods/goodsdetails",query:{id:row._id,edit:1,admin:1}});
       },
       //tab栏
       handleTab(tab, event) {

@@ -84,7 +84,7 @@
         </el-input>
       </div>
       <div class="item">
-          <div class="text"><label>备注:</label></div>
+          <div class="text active"><label>备注:</label></div>
           <el-input
             type="textarea"
             :rows="5"
@@ -185,6 +185,14 @@
       width: 200px;
       padding-right:10px; 
       text-align: right;
+    }
+    .text::before{
+      content: '*';
+      color: red;
+      margin-right:6px; 
+    }
+    .active::before{
+      content: '';
     }
     .radio{
       padding-left:6px; 

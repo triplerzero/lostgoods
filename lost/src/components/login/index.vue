@@ -1,28 +1,31 @@
 <template>
-  <div class="login">
-    <el-row :gutter="8" justify="center" type='flex'>
-      <el-col :xs="24" :sm="12" :md="10" :lg="8" :xl="8">
-        <el-input suffix-icon="el-icon-edit" placeholder="请输入学号" v-model="user"></el-input>
-        <el-input
-          suffix-icon
-          placeholder="请输入密码"
-          v-model="pwd"
-          :type="eyeOpen?'text':'password'"
-          @keyup.enter.native="handleLogin"
-        >
-          <i
-            :class="eyeOpen?'el-input__icon iconfont icon-kaiyan':'el-input__icon iconfont icon-biyan'"
-            slot="suffix"
-            @click="handleEye"
-          ></i>
-        </el-input>
-        <el-button type="primary" class="loginBtn" @click="handleLogin">登录</el-button>
-        <el-button type="danger" class="loginBtn" @click="handleClear">清空</el-button>
-        <el-radio v-model="radio" label="1">学生</el-radio>
-        <el-radio v-model="radio" label="2">管理员</el-radio>
-      </el-col>
-    </el-row>
-  </div>
+  <div>
+    <h1 class="loginTitle">高校失物管理系统</h1>
+    <div class="login">
+      <el-row :gutter="8" justify="center" type='flex'>
+        <el-col :xs="24" :sm="12" :md="10" :lg="8" :xl="8">
+          <el-input suffix-icon="el-icon-edit" placeholder="请输入学号" v-model="user"></el-input>
+          <el-input
+            suffix-icon
+            placeholder="请输入密码"
+            v-model="pwd"
+            :type="eyeOpen?'text':'password'"
+            @keyup.enter.native="handleLogin"
+          >
+            <i
+              :class="eyeOpen?'el-input__icon iconfont icon-kaiyan':'el-input__icon iconfont icon-biyan'"
+              slot="suffix"
+              @click="handleEye"
+            ></i>
+          </el-input>
+          <el-button type="primary" class="loginBtn" @click="handleLogin">登录</el-button>
+          <el-button type="danger" class="loginBtn" @click="handleClear">清空</el-button>
+          <el-radio v-model="radio" label="1">学生</el-radio>
+          <el-radio v-model="radio" label="2">管理员</el-radio>
+        </el-col>
+      </el-row>
+    </div>
+</div>
 </template>
 
 <script>
@@ -100,6 +103,12 @@ export default {
 i {
   font-size: 24px;
   color: #c0c4cc;
+}
+.loginTitle{
+  position: fixed;
+  left: 50%;
+  top: 20%;
+  transform: translate(-50%, -50%);
 }
 .login {
   position: fixed;
