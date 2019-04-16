@@ -3,7 +3,6 @@ import Router from 'vue-router'
 import Login from '@/components/login'
 import Index from '@/components/user/index'
 import adminIndex from '@/components/admin/index'
-import Goods from '@/components/user/goods'
 import GoodsDetails from '@/components/user/goodsdetails'
 import Addgoods from '@/components/user/addgoods'
 import Goodslist from '@/components/user/goodslist'
@@ -31,22 +30,17 @@ export default new Router({
       component:adminIndex
     },
     {
-      path:'/goods',
-      name:'goods',
-      component:Goods
-    },
-    {
-      path:'/goods/goodsdetails',
+      path:'/goodsdetails',
       name:'goodsdetails',
       component:GoodsDetails
     },
     {
-      path:'/user/addgoods',
+      path:'/addgoods',
       name:'addgoods',
       component:Addgoods 
     },
     {
-      path:'/user/goodslist',
+      path:'/goodslist',
       name:'goodslist',
       component:Goodslist
     }

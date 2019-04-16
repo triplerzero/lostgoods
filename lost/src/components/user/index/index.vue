@@ -15,9 +15,8 @@
                 <el-submenu index="2">
                   <template slot="title"><i class="el-icon-menu"></i>个人中心</template>
                   <el-menu-item-group>
-                      <el-menu-item index="2-1">个人信息</el-menu-item>
-                      <el-menu-item index="2-2">新增失物</el-menu-item>
-                      <el-menu-item index="2-3">发布记录</el-menu-item>
+                      <el-menu-item index="2-1">新增失物</el-menu-item>
+                      <el-menu-item index="2-2">发布记录</el-menu-item>
                     </el-menu-item-group>
                 </el-submenu>
               </el-menu>
@@ -31,7 +30,7 @@
           </div>
           <div class="tips">温馨提示：请丢失物品或拾取到物品的同学到综B一楼失物管理处交接物品，或者主动在该网站发布相关物品信息</div>
           <div class="avatar">
-            <img src="../../src/zhemu.jpg" alt="">
+            <img src="../../src/zhemu.jpg" alt="" @click="handleLink">
             <span>{{name}}</span>
           </div>
         </el-header>
@@ -54,7 +53,8 @@
             <el-table-column prop="goodsname" label="物品">
                 <template slot-scope="scope">
                   <div class="goods_msg">
-                    <img :src="scope.row.pic" class="goods_pic"/>
+                    <img v-if="scope.row.pic" :src="scope.row.pic" class="goods_pic"/>
+                    <img v-if="!scope.row.pic" src="../../src/pic.jpg" class="goods_pic">
                     <span class="goods_name">{{scope.row.goodsname}}</span>
                   </div>
                 </template>
@@ -86,7 +86,6 @@
             <el-table-column prop="details" label="操作"> 
                 <template slot-scope="scope">
                     <el-button @click="handleClick(scope.row)" type="text" size="small">详情</el-button>
-                    <!-- <el-button type="text" size="small">编辑</el-button> -->
                 </template>
             </el-table-column>
           </el-table>
@@ -129,22 +128,23 @@ methods: {
       handleSelect(key, keyPath) {
         switch(key){
           case '1-1':
-          this.$router.push({path:"user/addgoods"})
+          this.$router.push({path:"/index"})
           break;
           case '2-1':
-          this.$router.push({path:"user/addgoods"})
+          this.$router.push({path:"/addgoods"})
           break;
           case '2-2':
-          this.$router.push({path:"user/addgoods"})
-          break;
-          case '2-3':
-          this.$router.push({path:"user/goodslist"});
+          this.$router.push({path:"/goodslist"});
           break;
         }
       },
       //带参数跳转
       handleClick(row) {
-        this.$router.push({path:"goods/goodsdetails",query:{id:row._id}});
+        this.$router.push({path:"/goodsdetails",query:{id:row._id}});
+      },
+      //头像跳转
+      handleLink(){
+        this.$router.push({path:"/goodslist"});
       },
       //tab栏
       handleTab(tab, event) {

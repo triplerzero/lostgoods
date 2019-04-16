@@ -15,9 +15,8 @@
                 <el-submenu index="2">
                   <template slot="title"><i class="el-icon-menu"></i>个人中心</template>
                   <el-menu-item-group>
-                      <el-menu-item index="2-1">个人信息</el-menu-item>
-                      <el-menu-item index="2-2">新增失物</el-menu-item>
-                      <el-menu-item index="2-3">发布记录</el-menu-item>
+                      <el-menu-item index="2-1">新增失物</el-menu-item>
+                      <el-menu-item index="2-2">发布记录</el-menu-item>
                     </el-menu-item-group>
                 </el-submenu>
               </el-menu>
@@ -53,7 +52,7 @@
       return {
         userid:'',
         username: '',
-        index:'2-2',
+        index:'2-1',
         form:{
           date:new Date(),
           id:this.userid,
@@ -73,12 +72,25 @@
     }
   },
   methods: {
+        //导航栏
         handleSelect(key, keyPath) {
-          console.log(key, keyPath);
-        },
-        handleClick(row) {
-          console.log(row);
-        },
+        switch(key){
+          case '1-1':
+          let type=this.$cookies.get("type");
+          if(type==0){
+            this.$router.push({path:"/index"})  
+          }else{
+            this.$router.push({path:"/adminIndex"})
+          }
+          break;
+          case '2-1':
+          this.$router.push({path:"/addgoods"})
+          break;
+          case '2-2':
+          this.$router.push({path:"/goodslist"});
+          break;
+        }
+      },
         save(item){
         axios.post("/user/addGoods", item).then(res => {
           if (res.status == 200 && res.data.code == 0) {

@@ -3,18 +3,18 @@
   <div>
       <div class="item">
           <div class="text"><label>发布人学号:</label></div>
-          <el-input v-model="form.id" placeholder="发布人学号" :disabled="edit"></el-input>
+          <el-input v-model="form.id" placeholder="发布人学号" disabled="disabled"></el-input>
         </div>
       <div class="item">
         <div class="text"><label>发布人:</label></div>
-        <el-input v-model="form.name" placeholder="发布人" :disabled="edit"></el-input>
+        <el-input v-model="form.name" placeholder="发布人" disabled="disabled"></el-input>
       </div>
       <div class="item">
           <div class="text"><label>物品名称:</label></div>
           <el-input v-model="form.goodsname" placeholder="物品名称":disabled="edit"></el-input>
       </div>
       <div class="item">
-        <div class="text"><label>物品图片:</label></div>
+        <div class="text active"><label>物品图片:</label></div>
         <el-upload
         class="avatar-uploader"
         action=""
@@ -30,8 +30,8 @@
       <div class="item">
           <div class="text"><label>丢失/拾取时间:</label></div>
           <el-date-picker
-          v-model="date"
-          type="datetime"
+          v-model="form.date"
+          type="date"
           placeholder="选择日期时间"
           :disabled="edit"
           >
@@ -96,9 +96,9 @@
       </div>
       <div class="btn" v-if="!edit">
           <el-button type="info">返回</el-button>
-          <el-button type="primary" @click='save'>保存</el-button>
+          <el-button type="primary" @click='save' :disabled="btn">保存</el-button>
       </div>
-      <input type="file" @change="upload" ref="upload" id="file" name="file" accept="image/*" class="file">
+      <input type="file" @change="upload" ref="upload" id="file" name="file" accept="image/*" class="file" disabled="edit">
     </div>
 </template>
 
@@ -119,8 +119,7 @@
           value: '2',
           label: '已领取'
         }],
-        imageUrl:'',
-        date:new Date()
+        btn:false
       }
     },
     methods:{
@@ -140,9 +139,68 @@
 
       },
       save(){
-        let year=this.date.getFullYear();
-        let month=this.date.getMonth()+1;
-        let day=this.date.getDate();
+        this.btn=true;
+        if(this.form.goodsname==""){
+          this.$message({
+                message: "物品名称不能为空",
+                type: "error",
+                center: "true"
+              });
+          this.btn=false;
+          return false;
+        }
+        if(this.form.address==""){
+          this.$message({
+                message: "丢失/拾取地点不能为空",
+                type: "error",
+                center: "true"
+              });
+          this.btn=false;
+          return false;
+        }
+        if(this.form.phone==""){
+          this.$message({
+                message: "联系方式不能为空",
+                type: "error",
+                center: "true"
+              });
+          this.btn=false;
+          return false;
+        }
+        if(this.form.state=='2'){
+          if(this.form.receivername==""){
+          this.$message({
+                message: "领取人名字不能为空",
+                type: "error",
+                center: "true"
+              });
+          this.btn=false;
+          return false;
+        }
+        if(this.form.receiverphone==""){
+          this.$message({
+                message: "领取人联系方式不能为空",
+                type: "error",
+                center: "true"
+              });
+          this.btn=false;        
+          return false;
+        }
+        }
+        if(this.form.feature==""){
+          this.$message({
+                message: "物品特征不能为空",
+                type: "error",
+                center: "true"
+              });
+          this.btn=false;
+          return false;
+        }
+
+
+        let year=this.form.date.getFullYear();
+        let month=this.form.date.getMonth()+1;
+        let day=this.form.date.getDate();
         this.form.date=''+year+'-'+month+'-'+day+'';
         this.$emit('save',this.form);
       }
@@ -248,6 +306,12 @@
   .file{
     display: none;
   }
+  .el-textarea.is-disabled .el-textarea__inner {
+    background-color: #f5f7fa;
+    border-color: #E4E7ED;
+    color: #409EFF;;
+    cursor: not-allowed;
+}
 
 
 </style>

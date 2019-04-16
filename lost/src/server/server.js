@@ -9,8 +9,6 @@ const apiRouter=express.Router();
 const axios=require('axios');
 //导入数据库
 const db=require('./db');
-//获取user表
-const User=db.getModel('user');
 //引用中间件
 const app=express();
 app.use(bodyParser());

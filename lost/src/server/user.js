@@ -54,6 +54,7 @@ Router.post('/login', (req, res) => {
     }
     res.cookie('username',doc.userName);
     res.cookie('userid',doc.userId);
+    res.cookie('type',0)
     return res.json({code:0,data:doc})
   })
 })
@@ -74,7 +75,9 @@ Router.post('/adminLogin',(req,res)=>{
         msg: '账号或密码有误'
       })
     }
+    res.cookie('userid',doc.adminId);
     res.cookie('username',doc.adminName);
+    res.cookie('type',1);
     return res.json({code:0,data:doc})
   })  
 })
