@@ -17,6 +17,7 @@
                 <el-menu-item-group>
                     <el-menu-item index="2-1">新增失物</el-menu-item>
                     <el-menu-item index="2-2">发布记录</el-menu-item>
+                    <el-menu-item index="2-3">被举报记录</el-menu-item>
                   </el-menu-item-group>
               </el-submenu>
             </el-menu>

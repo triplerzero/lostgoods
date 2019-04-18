@@ -18,6 +18,12 @@ const models={
     sex:{type:'String',require:'true'},
     pwd:{type:'String',require:'true'}
   },
+  // superadmin:{
+  //   sadminId:{type:'String',require:'true'},
+  //   sadminName:{type:'String',require:'true'},
+  //   ssex:{type:'String',require:'true'},
+  //   spwd:{type:'String',require:'true'}
+  // },
   goods:{
     date:{type:'String'},
     id:{type:'String'},
@@ -32,6 +38,11 @@ const models={
     state:{type:'String'},
     receivername:{type:'String'},
     receiverphone:{type:'string'}
+  },
+  report:{
+    id:{type:'String'},
+    name:{type:'String'},
+    reason:{type:'String'}
   }
 }
 

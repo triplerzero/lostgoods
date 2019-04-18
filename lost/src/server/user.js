@@ -8,6 +8,7 @@ const db = require('./db');
 const User = db.getModel('user');
 const Admin=db.getModel('admin');
 const Goods=db.getModel('goods');
+const Report=db.getModel('report');
 //引入加密中间件
 const utils = require('utility');
 //引入图片上传中间件
@@ -18,8 +19,8 @@ const multer=require('multer')
 
 // });
 //插入数据
-// let pwds=md5Pwd('admin');
-// let {adminId,adminName,sex,pwd}={adminId:'admin',adminName:'admin',sex:0,pwd:pwds};
+// let pwds=md5Pwd('admins');
+// let {adminId,adminName,sex,pwd}={adminId:'admins',adminName:'admins',sex:1,pwd:pwds};
 // Admin.create({adminId,adminName,sex,pwd});
 
 //用户表插入数据
@@ -54,7 +55,8 @@ Router.post('/login', (req, res) => {
     }
     res.cookie('username',doc.userName);
     res.cookie('userid',doc.userId);
-    res.cookie('type',0)
+    res.cookie('type',0);
+    res.cookie('sex',doc.sex);
     return res.json({code:0,data:doc})
   })
 })
@@ -78,6 +80,7 @@ Router.post('/adminLogin',(req,res)=>{
     res.cookie('userid',doc.adminId);
     res.cookie('username',doc.adminName);
     res.cookie('type',1);
+    res.cookie('sex',doc.sex);
     return res.json({code:0,data:doc})
   })  
 })
@@ -136,7 +139,7 @@ Router.get('/getGoodsList',(req,res)=>{
         return res.json({
           code: 0,
           data: doc,
-          message:"学生发布记录"
+          msg:"学生发布记录"
         })
       }
     })
@@ -262,7 +265,7 @@ Router.post('/deleteGoods',(req,res)=>{
     }else{
       return res.json({
         code: 0,
-        message: '删除成功',
+        msg: '删除成功',
         data:doc
       })
     }  
@@ -270,25 +273,8 @@ Router.post('/deleteGoods',(req,res)=>{
 })
 //更新失物信息
 Router.post('/updateGoods',(req,res)=>{
-  Goods.update(
-    {
-      "_id":req.body._id
-    }, {
-      $set:{
-        "_id":req.body._id,
-        "date":req.body.date,
-        "name":req.body.name,
-        "pic":req.body.pic,
-        "type":req.body.type,
-        "goodsname":req.body.goodsname,
-        "feature":req.body.feature,
-        "address":req.body.address,
-        "phone":req.body.phone,
-        "remarks":req.body.remarks,
-        "state":req.body.state,
-        "receivername":req.body.receivername,
-        "receiverphone":req.body.receiverphone
-      }
+  Goods.update({
+      id:req
     }
     ,(err,doc)=>{
       if (!doc) {
@@ -299,7 +285,31 @@ Router.post('/updateGoods',(req,res)=>{
       }else{
         return res.json({
           code: 0,
-          message: '更新成功',
+          msg: '更新成功',
+          data:doc
+        })
+      }  
+  })
+})
+
+//举报
+Router.post('/report',(req,res)=>{
+  Report.create(
+    {
+      "id":req.body.id,
+      "name":req.body.name,
+      "reason":req.body.reason
+    }
+    ,(err,doc)=>{
+      if (!doc) {
+        return res.json({
+          code: 1,
+          msg: '举报失败'
+        })
+      }else{
+        return res.json({
+          code: 0,
+          msg: '举报成功，等待管理员审核',
           data:doc
         })
       }  

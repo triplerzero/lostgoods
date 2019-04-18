@@ -30,7 +30,7 @@
           </div>
           <div class="tips">温馨提示：请丢失物品或拾取到物品的同学到综B一楼失物管理处交接物品，或者主动在该网站发布相关物品信息</div>
           <div class="avatar">
-            <img src="../../src/zhemu.jpg" alt="" @click="handleLink">
+            <img :src="sex==1?'/static/img/ailiu.jpg':'/static/img/zhemu.jpg'" alt="" @click="handleLink">
             <span>{{name}}</span>
           </div>
         </el-header>
@@ -86,6 +86,7 @@
             <el-table-column prop="details" label="操作"> 
                 <template slot-scope="scope">
                     <el-button @click="handleClick(scope.row)" type="text" size="small">详情</el-button>
+                    <el-button @click="handleReport(scope.row)" type="text" size="small">举报</el-button>
                 </template>
             </el-table-column>
           </el-table>
@@ -93,6 +94,23 @@
         </div>
       </el-container>
     </el-container>
+    <el-dialog
+      title="请填写举报理由"
+      :visible.sync="centerDialogVisible"
+      :modal-append-to-body='false'
+      width="30%"
+      center>
+      <el-input
+        type="textarea"
+        :rows="4"
+        placeholder="请输入举报理由"
+        v-model="reason">
+      </el-input>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="centerDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="cofirmReport">确 定</el-button>
+      </span>
+    </el-dialog>
 </div>
 </template>
 
@@ -106,7 +124,11 @@ export default {
       index:'1-1',
       goodsname:'',
       feature:'',
+      sex:'',
+      reason:'',
       activeName: 'first',
+      centerDialogVisible: false,
+      row:{},
       type:{
         "1":"失物招领",
         "2":"寻物启事"
@@ -146,6 +168,27 @@ methods: {
       handleLink(){
         this.$router.push({path:"/goodslist"});
       },
+      //举报
+      handleReport(row){
+        this.centerDialogVisible=true;
+        this.row=row;
+      },
+      cofirmReport(){
+        let row=this.row;
+        this.centerDialogVisible = false
+        axios.post('/user/report',{
+          id:row._id,
+          name:row.goodsname,
+          reason:this.reason
+        }).then(res=>{
+          console.log(res);
+          this.$message({
+              message: res.data.msg,
+              type: "success",
+              center: "true"
+            });
+        })
+      },
       //tab栏
       handleTab(tab, event) {
         this.searchData.goodsname='';
@@ -177,7 +220,6 @@ methods: {
       getData(params){
         axios.get('/user/getGoodsList',{params}).then(res=>{
           if(res){
-            console.log(res);
             let data=res.data.data;
             this.tableData=data;
           }
@@ -186,6 +228,7 @@ methods: {
 },
   beforeMount() {
     this.name = this.$cookies.get("username");
+    this.sex=this.$cookies.get("sex");
     if(!this.$cookies.get("username")){
       this.$message({
               message: "请登陆后再进行访问",
