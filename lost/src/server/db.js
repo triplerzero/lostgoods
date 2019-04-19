@@ -41,8 +41,11 @@ const models={
   },
   report:{
     id:{type:'String'},
+    userid:{type:'String'},
     name:{type:'String'},
-    reason:{type:'String'}
+    reason:{type:'String'},
+    pic:{type:'String'},
+    goodsname:{type:'String'}
   }
 }
 

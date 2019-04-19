@@ -178,6 +178,21 @@ Router.get('/getGoodsList',(req,res)=>{
       })
     }
   }
+  if(req.query.id){
+    Goods.find({"_id":{"$in":req.query.id}},(err,doc)=>{
+      if (!doc) {
+        return res.json({
+          code: 1,
+          msg: '没有数据返回'
+        })
+      }else{
+        return res.json({
+          code: 0,
+          data: doc
+        })
+      }
+    })
+  }
   if(req.query.goodsname||req.query.feature||req.query.address){
     if(req.query.stype=="0"){
     Goods.find({
@@ -274,7 +289,23 @@ Router.post('/deleteGoods',(req,res)=>{
 //更新失物信息
 Router.post('/updateGoods',(req,res)=>{
   Goods.update({
-      id:req
+      "_id":req.body._id
+    }, {
+      $set:{
+        "_id":req.body._id,
+        "date":req.body.date,
+        "name":req.body.name,
+        "pic":req.body.pic,
+        "type":req.body.type,
+        "goodsname":req.body.goodsname,
+        "feature":req.body.feature,
+        "address":req.body.address,
+        "phone":req.body.phone,
+        "remarks":req.body.remarks,
+        "state":req.body.state,
+        "receivername":req.body.receivername,
+        "receiverphone":req.body.receiverphone
+      }
     }
     ,(err,doc)=>{
       if (!doc) {
@@ -298,6 +329,8 @@ Router.post('/report',(req,res)=>{
     {
       "id":req.body.id,
       "name":req.body.name,
+      "pic":req.body.pic,
+      "goodsname":req.body.goodsname,
       "reason":req.body.reason
     }
     ,(err,doc)=>{
@@ -310,6 +343,26 @@ Router.post('/report',(req,res)=>{
         return res.json({
           code: 0,
           msg: '举报成功，等待管理员审核',
+          data:doc
+        })
+      }  
+  })
+})
+
+//获取举报列表
+Router.get('/getreportlist',(req,res)=>{
+  Report.find(
+    {}
+    ,(err,doc)=>{
+      if (!doc) {
+        return res.json({
+          code: 1,
+          msg: '数据返回失败'
+        })
+      }else{
+        return res.json({
+          code: 0,
+          msg: '数据返回成功',
           data:doc
         })
       }  

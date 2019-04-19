@@ -1,6 +1,6 @@
 <template>
   <div class="index">
-  <el-container style="height: 740px; border: 1px solid #eee">
+  <el-container style="position:fixed;top:0;bottom:0;left:0;width:100%;">
     <div class="aside">
         <el-aside width="200px" style="background-color: #eee">
             <el-menu :default-openeds="['2']" :default-active="index" @select="handleSelect">
@@ -17,6 +17,7 @@
                 <el-menu-item-group>
                     <el-menu-item index="2-1">新增失物</el-menu-item>
                     <el-menu-item index="2-2">发布记录</el-menu-item>
+                    <el-menu-item index="2-3" v-if="type==1">举报记录</el-menu-item>
                   </el-menu-item-group>
               </el-submenu>
             </el-menu>
@@ -30,7 +31,7 @@
         </div>
         <div class="tips">温馨提示：请丢失物品或拾取到物品的同学到综B一楼失物管理处交接物品，或者主动在该网站发布相关物品信息</div>
         <div class="avatar">
-          <img src="../../src/zhemu.jpg" alt="">
+          <img :src="sex==1?'/static/img/ailiu.jpg':'/static/img/zhemu.jpg'" alt="">
           <span>{{name}}</span>
         </div>
       </el-header>
@@ -128,6 +129,9 @@ methods: {
           case '2-2':
           this.$router.push({path:"/goodslist"});
           break;
+          case '2-3':
+          this.$router.push({path:"/report"});
+          break;
         }
       },
       //带参数跳转
@@ -202,6 +206,7 @@ methods: {
   created(){
       this.name = this.$cookies.get("username");
       this.id=this.$cookies.get("userid");
+      this.sex=this.$cookies.get("sex");
       this.getData()
   }
 };
@@ -289,7 +294,7 @@ methods: {
       overflow-y: scroll;
     }
     .el-main{
-      padding:20px 20px ;
+      padding:20px;
     }
     .el-table .cell{
       text-overflow: -o-ellipsis-lastline;
@@ -311,7 +316,7 @@ methods: {
 }
 
 .tab{
-  padding: 10px 20px 10px;
+  padding: 0 20px;
   justify-content: flex-start;
   background: #f5f5f5;
 }

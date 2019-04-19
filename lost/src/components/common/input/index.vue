@@ -98,7 +98,7 @@
           <el-button type="info">返回</el-button>
           <el-button type="primary" @click='save' :disabled="btn">保存</el-button>
       </div>
-      <input type="file" @change="upload" ref="upload" id="file" name="file" accept="image/*" class="file" disabled="edit">
+      <input type="file" @change="upload" ref="upload" id="file" name="file" accept="image/*" class="file" :disabled="edit">
     </div>
 </template>
 
@@ -108,7 +108,12 @@
     props:{
       form:{
       },
-      edit:false
+      edit:{
+        type:Boolean,
+        default:function(){
+          return true
+        }
+      }
     },
     data(){
       return {
@@ -139,6 +144,7 @@
 
       },
       save(){
+        console.log(this.edit)
         this.btn=true;
         if(this.form.goodsname==""){
           this.$message({

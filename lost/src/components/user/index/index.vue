@@ -178,8 +178,10 @@ methods: {
         this.centerDialogVisible = false
         axios.post('/user/report',{
           id:row._id,
-          name:row.goodsname,
-          reason:this.reason
+          name:row.name,
+          reason:this.reason,
+          goodsname:row.goodsname,
+          pic:row.pic
         }).then(res=>{
           console.log(res);
           this.$message({
@@ -327,7 +329,7 @@ methods: {
       overflow-y: scroll;
     }
     .el-main{
-      padding:0 20px 20px;
+      padding:20px;
     }
     .el-table .cell{
       text-overflow: -o-ellipsis-lastline;
@@ -349,7 +351,7 @@ methods: {
 }
 
 .tab{
-  padding: 10px 20px 10px;
+  padding: 0 20px;
   justify-content: flex-start;
   background: #f5f5f5;
 }

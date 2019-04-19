@@ -3,7 +3,7 @@
   <el-container style="position:fixed;top:0;bottom:0;left:0;width:100%;">
     <div class="aside">
         <el-aside width="200px" style="background-color: #eee">
-            <el-menu :default-openeds="['1']" :default-active="index" @select="handleSelect">
+            <el-menu :default-openeds="['2']" :default-active="index" @select="handleSelect">
               <div class="logo">
               </div>
               <el-submenu index="1">
@@ -27,7 +27,7 @@
     <el-container>
       <el-header style="text-align: right; font-size: 12px">
         <div class="nav">
-          <span>失物</span> > <span class="lost">失物信息</span>
+          <span>失物</span> > <span class="lost">举报记录</span>
         </div>
         <div class="tips">温馨提示：请丢失物品或拾取到物品的同学到综B一楼失物管理处交接物品，或者主动在该网站发布相关物品信息</div>
         <div class="avatar">
@@ -35,23 +35,9 @@
           <span>{{name}}</span>
         </div>
       </el-header>
-      <div class="search">
-          <el-input v-model="searchData.goodsname" placeholder="物品名称"></el-input>
-          <el-input v-model="searchData.feature" placeholder="物品特征"></el-input>
-          <el-input v-model="searchData.address" placeholder="地点"></el-input>
-          <el-button type="primary" @click="handleSearch">搜索</el-button>
-      </div>
-      <div class="tab">
-          <el-tabs v-model="activeName" @tab-click="handleTab">
-              <el-tab-pane label="全部" name="first"></el-tab-pane>
-              <el-tab-pane label="失物招领" name="second"></el-tab-pane>
-              <el-tab-pane label="寻物启事" name="third"></el-tab-pane>
-          </el-tabs>
-      </div>
       <div class="main">
       <el-main>
-        <el-table :data="tableData" stripe type="selection" height="100%">
-          <el-table-column type="selection"></el-table-column>
+        <el-table :data="tableData" stripe type="selection">
           <el-table-column prop="goodsname" label="物品">
               <template slot-scope="scope">
                 <div class="goods_msg">
@@ -60,33 +46,15 @@
                 </div>
               </template>
           </el-table-column>
-          <el-table-column prop="date" label="丢失/拾取时间">
-          </el-table-column>
-          <el-table-column prop="id" label="发布人学号">
+          <el-table-column prop="userid" label="发布人学号">
           </el-table-column>
           <el-table-column prop="name" label="发布人姓名">
           </el-table-column>
-          <el-table-column prop="type" label="发布类型">
-              <template slot-scope="scope">
-                <span>{{type[scope.row.type]}}</span> 
-              </template>
-          </el-table-column>
-          <el-table-column prop="feature" label="物品特征">
-          </el-table-column>
-          <el-table-column prop="address" label="地点">
-          </el-table-column>
-          <el-table-column prop="phone" label="联系方式">
-          </el-table-column>
-          <el-table-column prop="remarks" label="备注"> 
-          </el-table-column>
-          <el-table-column prop="state" label="失物状态"> 
-              <template slot-scope="scope">
-                  <span>{{status[scope.row.state]}}</span> 
-                </template>
+          <el-table-column prop="reason" label="举报理由"> 
           </el-table-column>
           <el-table-column prop="details" label="操作"> 
               <template slot-scope="scope">
-                  <el-button @click="handleClick(scope.row)" type="text" size="small">编辑</el-button>
+                  <el-button @click="handleClick(scope.row)" type="text" size="small">详情</el-button>
                   <el-button type="text" size="small" @click="handleDelete(scope.row)">删除</el-button>
               </template>
           </el-table-column>
@@ -103,13 +71,15 @@ import axios from 'axios'
 export default {
   data() {
     return {
-      id:'',
       name: '',
       tableData:[],
-      index:'1-1',
+      index:'2-3',
       goodsname:'',
       feature:'',
+      sex:0,
+      report:{},
       activeName: 'first',
+      reportid:[],
       type:{
         "1":"失物招领",
         "2":"寻物启事"
@@ -139,13 +109,11 @@ methods: {
           case '2-2':
           this.$router.push({path:"/goodslist"});
           break;
-          case '2-3':
-          this.$router.push({path:"/report"});
-          break;
         }
       },
       //带参数跳转
       handleClick(row) {
+        console.log(row);
         this.$router.push({path:"/goodsdetails",query:{id:row._id,edit:1,admin:1}});
       },
       //头像跳转
@@ -207,6 +175,7 @@ methods: {
       getData(params){
         axios.get('/user/getGoodsList',{params}).then(res=>{
           if(res){
+            console.log(res);
             let data=res.data.data.reverse();
             this.tableData=data;
           }
@@ -215,7 +184,6 @@ methods: {
 },
   beforeMount() {
     this.name = this.$cookies.get("username");
-    this.id=this.$cookies.get("id");
     this.sex=this.$cookies.get("sex");
     if(!this.$cookies.get("username")){
       this.$message({
@@ -228,12 +196,17 @@ methods: {
     
   },
   created(){
-    axios.get('/user/getGoodsList').then(res=>{
-      if (res.status == 200 && res.data.code == 0) {
-        let data=res.data.data.reverse();
-        this.tableData=data;
-      }
+    axios.get('/user/getreportlist').then(res=>{
+      // res.data.data.forEach(element => {
+      //   this.reportid.push(element.id);
+      // });
+      // this.report=res.data.data;
+      // let params={id:this.reportid}
+      // this.getData(params)
+      let data=res.data.data.reverse();
+      this.tableData=data;
     })
+
   }
 };
 </script>
