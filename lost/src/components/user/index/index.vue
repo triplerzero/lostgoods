@@ -32,6 +32,7 @@
           <div class="avatar">
             <img :src="sex==1?'/static/img/ailiu.jpg':'/static/img/zhemu.jpg'" alt="" @click="handleLink">
             <span>{{name}}</span>
+            <router-link :to="'/login'">退出</router-link>  
           </div>
         </el-header>
         <div class="search">
@@ -178,6 +179,7 @@ methods: {
         this.centerDialogVisible = false
         axios.post('/user/report',{
           id:row._id,
+          userid:row.id,
           name:row.name,
           reason:this.reason,
           goodsname:row.goodsname,

@@ -34,15 +34,33 @@
           <div class="avatar">
             <img :src="sex==1?'/static/img/ailiu.jpg':'/static/img/zhemu.jpg'" alt="">
             <span>{{username}}</span>
+            <router-link :to="'/login'">退出</router-link> 
           </div>
         </el-header>
         <div class="main">
         <el-main>
-            <input-text :form='form' :edit='edit' @save="save"></input-text>
+            <input-text :form='form' :edit='edit' @save="save" @report="report"></input-text>
         </el-main>
         </div>
       </el-container>
     </el-container>
+    <el-dialog
+    title="请填写举报理由"
+    :visible.sync="centerDialogVisible"
+    :modal-append-to-body='false'
+    width="30%"
+    center>
+    <el-input
+      type="textarea"
+      :rows="4"
+      placeholder="请输入举报理由"
+      v-model="reason">
+    </el-input>
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="centerDialogVisible = false">取 消</el-button>
+      <el-button type="primary" @click="cofirmReport">确 定</el-button>
+    </span>
+    </el-dialog>
   </div>
   </template>
   
@@ -58,7 +76,10 @@
         edit:true,
         sex:0,
         type:0,
+        reason:'',
+        centerDialogVisible:false,
         form:{
+          _id:'',
           id:this.userid,
           goodsname:'',
           feature:'',
@@ -94,7 +115,6 @@
       },
         save(item){
         axios.post("/user/updateGoods", item).then(res => {
-          console.log(item);
           if (res.status == 200 && res.data.code == 0) {
             this.$message({
               message: "更新成功",
@@ -105,7 +125,7 @@
             if(admin==1){
               this.$router.push({path:'/adminIndex'})
             }else{
-              this.$router.push({path:'/user/goodslist'})
+              this.$router.push({path:'/goodslist'})
             }
           } else {
             this.$message({
@@ -115,7 +135,28 @@
             });
           }
         });
-        }
+        },
+        report(){
+          this.centerDialogVisible=true;
+        },
+        cofirmReport(){
+        let row=this.form;
+        this.centerDialogVisible = false
+        axios.post('/user/report',{
+          id:row._id,
+          name:row.name,
+          reason:this.reason,
+          goodsname:row.goodsname,
+          pic:row.pic,
+          userid:row.id
+        }).then(res=>{
+          this.$message({
+              message: res.data.msg,
+              type: "success",
+              center: "true"
+            });
+        })
+      }
   },
     beforeMount() {
       this.userid = this.$cookies.get("userid");
@@ -142,6 +183,7 @@
       }
       axios.get('/user/getGoodsDetail?id='+query+'').then(res=>{
         this.form=res.data.data;
+        console.log(this.form);
         this.form.date=new Date(this.form.date)
       })
     },

@@ -3,13 +3,14 @@
     <el-container style="position:fixed;top:0;bottom:0;left:0;width:100%;">
       <div class="aside">
           <el-aside width="200px" style="background-color: #eee">
-              <el-menu :default-openeds="['2']" :default-active="index" @select="handleSelect">
+              <el-menu :default-openeds="['1']" :default-active="index" @select="handleSelect">
                 <div class="logo">
                 </div>
                 <el-submenu index="1">
                   <template slot="title"><i class="el-icon-message"></i>失物管理</template>
                   <el-menu-item-group>
                     <el-menu-item index="1-1">失物信息</el-menu-item>
+                    <el-menu-item index="1-2">失物详情</el-menu-item>
                   </el-menu-item-group>
                 </el-submenu>
                 <el-submenu index="2">
@@ -27,7 +28,7 @@
       <el-container>
         <el-header style="text-align: right; font-size: 12px">
           <div class="nav">
-            <span>失物</span> > <span class="lost">新增失物</span>
+            <span>失物</span> > <span class="lost">失物详情</span>
           </div>
           <div class="tips">温馨提示：请丢失物品或拾取到物品的同学到综B一楼失物管理处交接物品，或者主动在该网站发布相关物品信息</div>
           <div class="avatar">
@@ -38,7 +39,7 @@
         </el-header>
         <div class="main">
         <el-main>
-            <input-text :form='form' @save='save' :edit="edit"></input-text>
+            <input-text :form='form' :edit='edit' @save="save" @delgoods="delgoods" :del="del" :reason="reason"></input-text>
         </el-main>
         </div>
       </el-container>
@@ -48,38 +49,32 @@
   
   <script>
   import inputText from '../../common/input';
-  import axios from "axios";
+  import axios from 'axios';
   export default {
     data() {
       return {
-        userid:'',
         username: '',
-        index:'2-1',
+        userid:'',
+        index:'1-2',
+        edit:true,
         sex:0,
         type:0,
-        edit:false,
-        type:0,
+        del:true,
+        reason:'',
         form:{
-          date:new Date(),
           id:this.userid,
-          name:'',
-          pic:'',
-          type:'1',
-          address:'',
           goodsname:'',
           feature:'',
-          state:'1',
-          phone:'',
-          remarks:'',
-          edit:false,
-          receivername:'',
-          receiverphone:''
+          type:'',
+          radio:'1',
+          name:'',
+          date: new Date()
         }
     }
   },
   methods: {
-        //导航栏
-        handleSelect(key, keyPath) {
+      //导航栏
+      handleSelect(key, keyPath) {
         switch(key){
           case '1-1':
           let type=this.$cookies.get("type");
@@ -101,14 +96,20 @@
         }
       },
         save(item){
-        axios.post("/user/addGoods", item).then(res => {
+        axios.post("/user/updateGoods", item).then(res => {
+          console.log(item);
           if (res.status == 200 && res.data.code == 0) {
             this.$message({
-              message: "添加成功",
+              message: "更新成功",
               type: "success",
               center: "true"
             });
-            this.$router.push({path:'/index'})
+            let admin=this.$route.query.admin;
+            if(admin==1){
+              this.$router.push({path:'/adminIndex'})
+            }else{
+              this.$router.push({path:'/goodslist'})
+            }
           } else {
             this.$message({
               message: res.data.msg,
@@ -117,9 +118,36 @@
             });
           }
         });
+        },
+        delgoods(){
+          let query=this.$route.query.id;
+          this.$confirm('此操作将永久删除该失物信息, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+              axios.post('/user/deleteGoods',
+              {_id:query}
+            ).then(res=>{
+              this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+            this.$router.push({path:"/report"});
+            })
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            });          
+          }); 
         }
   },
     beforeMount() {
+      this.userid = this.$cookies.get("userid");
+      this.username = this.$cookies.get("username");
+      this.sex=this.$cookies.get("sex");
+      this.type=this.$cookies.get("type");
       if(!this.$cookies.get("username")){
         this.$message({
                 message: "请登陆后再进行访问",
@@ -128,12 +156,18 @@
               });
         this.$router.push({path:"login"});
       }
-      this.userid=this.$cookies.get("userid");
-      this.username = this.$cookies.get("username");
-      this.sex = this.$cookies.get("sex");
+      
     },
     created(){
-      this.type=this.$cookies.get("type")
+      let query=this.$route.query.id;
+      let edit=this.$route.query.edit;
+      axios.get('/user/getGoodsDetail?id='+query+'').then(res=>{
+        this.form=res.data.data;
+        this.form.date=new Date(this.form.date)
+      })
+      axios.get('/user/getreportDetail?id='+query+'').then(res=>{
+        this.reason=res.data.data[0].reason
+      })
     },
     components:{
       inputText

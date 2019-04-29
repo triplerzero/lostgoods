@@ -7,6 +7,7 @@ import GoodsDetails from '@/components/user/goodsdetails'
 import Addgoods from '@/components/user/addgoods'
 import Goodslist from '@/components/user/goodslist'
 import Report from '@/components/admin/report'
+import ReportDetails from '@/components/admin/goodsdetails'
 Vue.use(Router)
 
 export default new Router({
@@ -49,6 +50,10 @@ export default new Router({
       path:'/report',
       name:'report',
       component:Report
+    },{
+      path:'/reportdetails',
+      name:'reportdetails',
+      component:ReportDetails
     }
   ]
 })

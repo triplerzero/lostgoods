@@ -21,4 +21,9 @@ export default {
 body{
   background: #f5f5f5;
 }
+a{
+  text-decoration: none;
+  padding:0 10px;
+  color:#66b1ff;
+}
 </style>

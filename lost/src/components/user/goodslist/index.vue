@@ -33,6 +33,7 @@
         <div class="avatar">
           <img :src="sex==1?'/static/img/ailiu.jpg':'/static/img/zhemu.jpg'" alt="">
           <span>{{name}}</span>
+          <router-link :to="'/login'">退出</router-link>  
         </div>
       </el-header>
       <div class="goodsLidtMain">
@@ -52,9 +53,9 @@
           </el-table-column>
           <el-table-column prop="name" label="发布人姓名">
           </el-table-column>
-          <el-table-column prop="type" label="发布类型">
+          <el-table-column prop="stype" label="发布类型">
               <template slot-scope="scope">
-                <span>{{type[scope.row.type]}}</span> 
+                <span>{{stype[scope.row.type]}}</span> 
               </template>
           </el-table-column>
           <el-table-column prop="feature" label="物品特征">
@@ -95,8 +96,9 @@ export default {
       index:'2-2',
       goodsname:'',
       feature:'',
+      type:'',
       activeName: 'first',
-      type:{
+      stype:{
         "1":"失物招领",
         "2":"寻物启事"
       },
@@ -149,7 +151,6 @@ methods: {
             {_id:row._id}
           ).then(res=>{
             this.getData();
-            console.log(res);
             this.$message({
             type: 'success',
             message: '删除成功!'
@@ -186,6 +187,7 @@ methods: {
           userId:this.id
         }}).then(res=>{
           if(res){
+            console.log(res);
             let data=res.data.data.reverse();
             this.tableData=data;
           }
@@ -207,6 +209,7 @@ methods: {
       this.name = this.$cookies.get("username");
       this.id=this.$cookies.get("userid");
       this.sex=this.$cookies.get("sex");
+      this.type=this.$cookies.get("type");
       this.getData()
   }
 };
