@@ -117,7 +117,34 @@ Router.post('/addGoods', (req, res) => {
 //获取失物列表信息
 Router.get('/getGoodsList', (req, res) => {
   if (JSON.stringify(req.query) == "{}") {
-    Goods.find({}, (err, doc) => {
+    let goodlist = Goods.find({}).limit(10)
+    let total=Goods.find({}).count();
+    let num=0;
+    total.exec((err,doc)=>{
+      num=doc 
+    })
+    goodlist.exec((err, doc) => {
+      if (!doc) {
+        return res.json({
+          code: 1,
+          msg: '没有数据返回'
+        })
+      } else {
+        return res.json({
+          code: 0,
+          data: doc,
+          total:num
+        })
+      }
+    })
+  }
+  if (req.page && req.pagesize) {
+    let page = req.body.page;
+    let pagesize = req.body.pagesize;
+    let queryResult = Goods.find(req.body.queryCondition).limit(pageSize).skip((page - 1) * pageSize).sort({
+      '_id': -1
+    });
+    queryResult.exec((err, doc) => {
       if (!doc) {
         return res.json({
           code: 1,
@@ -182,7 +209,6 @@ Router.get('/getGoodsList', (req, res) => {
       })
     }
   }
-  // {"_id":{"$in":req.query.id}
   if (req.query.id) {
     Goods.find({
       "_id": req.query.id
@@ -200,7 +226,7 @@ Router.get('/getGoodsList', (req, res) => {
       }
     })
   }
-  if (req.query.goodsname || req.query.feature || req.query.address) {
+  if (req.query.goodsname || req.query.feature || req.query.address || req.query.state) {
     if (req.query.stype == "0") {
       Goods.find({
         $and: [{
@@ -217,6 +243,8 @@ Router.get('/getGoodsList', (req, res) => {
             address: {
               $regex: req.query.address
             }
+          }, {
+            state: req.query.state
           }
         ]
       }, (err, doc) => {
@@ -304,6 +332,29 @@ Router.post('/uploadImg', upload, (req, res) => {
 Router.post('/deleteGoods', (req, res) => {
   Goods.remove({
     _id: req.body._id
+  }, (err, doc) => {
+    if (!doc) {
+      return res.json({
+        code: 1,
+        msg: '删除失败'
+      })
+    } else {
+      return res.json({
+        code: 0,
+        msg: '删除成功',
+        data: doc
+      })
+    }
+  })
+})
+
+//批量删除
+// {"_id":{"$in":req.query.id}
+Router.post('/deleteGoodsAll', (req, res) => {
+  Goods.remove({
+    _id: {
+      "$in": req.body.delArray
+    }
   }, (err, doc) => {
     if (!doc) {
       return res.json({

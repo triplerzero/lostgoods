@@ -202,7 +202,7 @@
 
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
   .logo {
     background: #66b1ff;
     width: 180px;

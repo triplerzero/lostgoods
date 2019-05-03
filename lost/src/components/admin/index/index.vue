@@ -40,6 +40,10 @@
           <el-input v-model="searchData.goodsname" placeholder="物品名称"></el-input>
           <el-input v-model="searchData.feature" placeholder="物品特征"></el-input>
           <el-input v-model="searchData.address" placeholder="地点"></el-input>
+          <el-select v-model="searchData.state" clearable placeholder="物品状态">
+            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
           <el-button type="primary" @click="handleSearch">搜索</el-button>
         </div>
         <div class="tab">
@@ -51,8 +55,8 @@
         </div>
         <div class="main">
           <el-main>
-            <el-table :data="tableData" stripe height="100%">
-              <!-- <el-table-column type="selection"></el-table-column> -->
+            <el-table :data="tableData" stripe height="100%" @selection-change="handleSelectionChange">
+              <el-table-column type="selection"></el-table-column>
               <el-table-column prop="goodsname" label="物品">
                 <template slot-scope="scope">
                   <div class="goods_msg">
@@ -94,6 +98,13 @@
             </el-table>
           </el-main>
         </div>
+        <div class="footer">
+          <el-button class="delBtn" type="primary" @click="handleDelAll">批量删除</el-button>
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+            :current-page="currentPage" :page-sizes="[10]" :page-size="100"
+            layout="total, sizes, prev, pager, next, jumper" :total="total" class="pager">
+          </el-pagination>
+        </div>
       </el-container>
     </el-container>
   </div>
@@ -111,6 +122,18 @@
         goodsname: '',
         feature: '',
         activeName: 'first',
+        delArray: [],
+        total: 0,
+        currentPage: 1,
+        options: [{
+            value: '1',
+            label: '未领取'
+          },
+          {
+            value: '2',
+            label: '已领取'
+          }
+        ],
         type: {
           "1": "失物招领",
           "2": "寻物启事"
@@ -123,11 +146,19 @@
           goodsname: '',
           feature: '',
           address: '',
-          type: '0'
+          type: '0',
+          state: ''
         }
       }
     },
     methods: {
+      //分页
+      handleSizeChange(val) {
+        console.log(val)
+      },
+      handleCurrentChange(val) {
+        console.log(val)
+      },
       //导航栏
       handleSelect(key, keyPath) {
         switch (key) {
@@ -183,13 +214,15 @@
       },
       //搜索
       handleSearch() {
-        if (!(this.searchData.goodsname == '' && this.searchData.feature == '' && this.searchData.address == '')) {
+        if (!(this.searchData.goodsname == '' && this.searchData.feature == '' && this.searchData.address == '' && this
+            .searchData.state == '')) {
           axios.get('/user/getGoodsList', {
             params: {
               goodsname: this.searchData.goodsname,
               feature: this.searchData.feature,
               address: this.searchData.address,
-              stype: this.searchData.type
+              stype: this.searchData.type,
+              state: Number(this.searchData.state)
             }
           }).then(res => {
             if (res) {
@@ -211,12 +244,11 @@
           axios.post('/user/deleteGoods', {
             _id: row._id
           }).then(res => {
-            this.getData();
-            console.log(res);
             this.$message({
               type: 'success',
               message: '删除成功!'
             });
+            this.getData();
           })
         }).catch(() => {
           this.$message({
@@ -225,13 +257,44 @@
           });
         });
       },
+      //批量删除失物
+      handleSelectionChange(val) {
+        this.delArray = val;
+        console.log(this.delArray)
+      },
+      handleDelAll() {
+        let array = [];
+        this.delArray.forEach(ele => {
+          array.push(ele._id)
+        })
+        this.$confirm('是否删除所选项', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          axios.post('user/deleteGoodsAll', {
+            delArray: array
+          }).then(res => {
+            console.log(res)
+            this.getData();
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+      },
+      //获取数据
       getData(params) {
         axios.get('/user/getGoodsList', {
           params
         }).then(res => {
           if (res) {
+            console.log(res)
             let data = res.data.data.reverse();
             this.tableData = data;
+            this.total = res.data.total;
           }
         })
       }
@@ -253,12 +316,7 @@
 
     },
     created() {
-      axios.get('/user/getGoodsList').then(res => {
-        if (res.status == 200 && res.data.code == 0) {
-          let data = res.data.data.reverse();
-          this.tableData = data;
-        }
-      })
+      this.getData();
     }
   };
 
@@ -398,6 +456,31 @@
     .goods_name {
       color: #66b1ff;
       padding-left: 10px;
+    }
+  }
+
+  .el-select>.el-input {
+    width: 80%;
+  }
+
+  .el-input__suffix {
+    right: 12px;
+    -webkit-transition: all .3s;
+    transition: all .3s;
+  }
+
+  .footer {
+    margin-bottom: 20px;
+
+    .delBtn {
+      float: left;
+      margin: 0 20px 20px;
+      width: 8%;
+      min-width: 100px;
+    }
+
+    .pager {
+      float: right;
     }
   }
 

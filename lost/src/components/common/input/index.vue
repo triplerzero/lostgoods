@@ -42,7 +42,7 @@
     </div>
     <div class="item">
       <div class="text"><label>物品状态:</label></div>
-      <el-select v-model="form.state" clearable placeholder="请选择" :disabled="edit">
+      <el-select v-model="form.state" placeholder="请选择" :disabled="edit">
         <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
         </el-option>
       </el-select>
@@ -230,7 +230,7 @@
 
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
   .item {
     display: flex;
     align-items: center;

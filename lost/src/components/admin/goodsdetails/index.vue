@@ -97,7 +97,6 @@
       },
         save(item){
         axios.post("/user/updateGoods", item).then(res => {
-          console.log(item);
           if (res.status == 200 && res.data.code == 0) {
             this.$message({
               message: "更新成功",

@@ -215,7 +215,7 @@ methods: {
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
     body{
       background: f5f5f5;
     }

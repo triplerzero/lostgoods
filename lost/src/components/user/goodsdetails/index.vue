@@ -1,30 +1,30 @@
 <template>
-    <div class="index">
+  <div class="index">
     <el-container style="position:fixed;top:0;bottom:0;left:0;width:100%;">
       <div class="aside">
-          <el-aside width="200px" style="background-color: #eee">
-              <el-menu :default-openeds="['1']" :default-active="index" @select="handleSelect">
-                <div class="logo">
-                </div>
-                <el-submenu index="1">
-                  <template slot="title"><i class="el-icon-message"></i>失物管理</template>
-                  <el-menu-item-group>
-                    <el-menu-item index="1-1">失物信息</el-menu-item>
-                    <el-menu-item index="1-2">失物详情</el-menu-item>
-                  </el-menu-item-group>
-                </el-submenu>
-                <el-submenu index="2">
-                  <template slot="title"><i class="el-icon-menu"></i>个人中心</template>
-                  <el-menu-item-group>
-                      <el-menu-item index="2-1">新增失物</el-menu-item>
-                      <el-menu-item index="2-2">发布记录</el-menu-item>
-                      <el-menu-item index="2-3" v-if="type==1">举报记录</el-menu-item>
-                    </el-menu-item-group>
-                </el-submenu>
-              </el-menu>
-            </el-aside>
+        <el-aside width="200px" style="background-color: #eee">
+          <el-menu :default-openeds="['1']" :default-active="index" @select="handleSelect">
+            <div class="logo">
+            </div>
+            <el-submenu index="1">
+              <template slot="title"><i class="el-icon-message"></i>失物管理</template>
+              <el-menu-item-group>
+                <el-menu-item index="1-1">失物信息</el-menu-item>
+                <el-menu-item index="1-2">失物详情</el-menu-item>
+              </el-menu-item-group>
+            </el-submenu>
+            <el-submenu index="2">
+              <template slot="title"><i class="el-icon-menu"></i>个人中心</template>
+              <el-menu-item-group>
+                <el-menu-item index="2-1">新增失物</el-menu-item>
+                <el-menu-item index="2-2">发布记录</el-menu-item>
+                <el-menu-item index="2-3" v-if="type==1">举报记录</el-menu-item>
+              </el-menu-item-group>
+            </el-submenu>
+          </el-menu>
+        </el-aside>
       </div>
-  
+
       <el-container>
         <el-header style="text-align: right; font-size: 12px">
           <div class="nav">
@@ -34,86 +34,87 @@
           <div class="avatar">
             <img :src="sex==1?'/static/img/ailiu.jpg':'/static/img/zhemu.jpg'" alt="">
             <span>{{username}}</span>
-            <router-link :to="'/login'">退出</router-link> 
+            <router-link :to="'/login'">退出</router-link>
           </div>
         </el-header>
         <div class="main">
-        <el-main>
+          <el-main>
             <input-text :form='form' :edit='edit' @save="save" @report="report"></input-text>
-        </el-main>
+          </el-main>
         </div>
       </el-container>
     </el-container>
-    <el-dialog
-    title="请填写举报理由"
-    :visible.sync="centerDialogVisible"
-    :modal-append-to-body='false'
-    width="30%"
-    center>
-    <el-input
-      type="textarea"
-      :rows="4"
-      placeholder="请输入举报理由"
-      v-model="reason">
-    </el-input>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="centerDialogVisible = false">取 消</el-button>
-      <el-button type="primary" @click="cofirmReport">确 定</el-button>
-    </span>
+    <el-dialog title="请填写举报理由" :visible.sync="centerDialogVisible" :modal-append-to-body='false' width="30%" center>
+      <el-input type="textarea" :rows="4" placeholder="请输入举报理由" v-model="reason">
+      </el-input>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="centerDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="cofirmReport">确 定</el-button>
+      </span>
     </el-dialog>
   </div>
-  </template>
-  
-  <script>
+</template>
+
+<script>
   import inputText from '../../common/input';
   import axios from 'axios';
   export default {
     data() {
       return {
         username: '',
-        userid:'',
-        index:'1-2',
-        edit:true,
-        sex:0,
-        type:0,
-        reason:'',
-        centerDialogVisible:false,
-        form:{
-          _id:'',
-          id:this.userid,
-          goodsname:'',
-          feature:'',
-          type:'',
-          radio:'1',
-          name:'',
+        userid: '',
+        index: '1-2',
+        edit: true,
+        sex: 0,
+        type: 0,
+        reason: '',
+        centerDialogVisible: false,
+        form: {
+          _id: '',
+          id: this.userid,
+          goodsname: '',
+          feature: '',
+          type: '',
+          radio: '1',
+          name: '',
           date: new Date()
         }
-    }
-  },
-  methods: {
+      }
+    },
+    methods: {
       //导航栏
       handleSelect(key, keyPath) {
-        switch(key){
+        switch (key) {
           case '1-1':
-          let type=this.$cookies.get("type");
-          if(type==0){
-            this.$router.push({path:"/index"})  
-          }else{
-            this.$router.push({path:"/adminIndex"})
-          }
-          break;
+            let type = this.$cookies.get("type");
+            if (type == 0) {
+              this.$router.push({
+                path: "/index"
+              })
+            } else {
+              this.$router.push({
+                path: "/adminIndex"
+              })
+            }
+            break;
           case '2-1':
-          this.$router.push({path:"/addgoods"})
-          break;
+            this.$router.push({
+              path: "/addgoods"
+            })
+            break;
           case '2-2':
-          this.$router.push({path:"/goodslist"});
-          break;
+            this.$router.push({
+              path: "/goodslist"
+            });
+            break;
           case '2-3':
-          this.$router.push({path:"/report"});
-          break;
+            this.$router.push({
+              path: "/report"
+            });
+            break;
         }
       },
-        save(item){
+      save(item) {
         axios.post("/user/updateGoods", item).then(res => {
           if (res.status == 200 && res.data.code == 0) {
             this.$message({
@@ -121,11 +122,15 @@
               type: "success",
               center: "true"
             });
-            let admin=this.$route.query.admin;
-            if(admin==1){
-              this.$router.push({path:'/adminIndex'})
-            }else{
-              this.$router.push({path:'/goodslist'})
+            let admin = this.$route.query.admin;
+            if (admin == 1) {
+              this.$router.push({
+                path: '/adminIndex'
+              })
+            } else {
+              this.$router.push({
+                path: '/goodslist'
+              })
             }
           } else {
             this.$message({
@@ -135,144 +140,160 @@
             });
           }
         });
-        },
-        report(){
-          this.centerDialogVisible=true;
-        },
-        cofirmReport(){
-        let row=this.form;
+      },
+      report() {
+        this.centerDialogVisible = true;
+      },
+      cofirmReport() {
+        let row = this.form;
         this.centerDialogVisible = false
-        axios.post('/user/report',{
-          id:row._id,
-          name:row.name,
-          reason:this.reason,
-          goodsname:row.goodsname,
-          pic:row.pic,
-          userid:row.id
-        }).then(res=>{
+        axios.post('/user/report', {
+          id: row._id,
+          name: row.name,
+          reason: this.reason,
+          goodsname: row.goodsname,
+          pic: row.pic,
+          userid: row.id
+        }).then(res => {
           this.$message({
-              message: res.data.msg,
-              type: "success",
-              center: "true"
-            });
+            message: res.data.msg,
+            type: "success",
+            center: "true"
+          });
         })
       }
-  },
+    },
     beforeMount() {
       this.userid = this.$cookies.get("userid");
       this.username = this.$cookies.get("username");
-      this.sex=this.$cookies.get("sex");
-      this.type=this.$cookies.get("type");
-      if(!this.$cookies.get("username")){
+      this.sex = this.$cookies.get("sex");
+      this.type = this.$cookies.get("type");
+      if (!this.$cookies.get("username")) {
         this.$message({
-                message: "请登陆后再进行访问",
-                type: "error",
-                center: "true"
-              });
-        this.$router.push({path:"login"});
+          message: "请登陆后再进行访问",
+          type: "error",
+          center: "true"
+        });
+        this.$router.push({
+          path: "login"
+        });
       }
-      
+
     },
-    created(){
-      let query=this.$route.query.id;
-      let edit=this.$route.query.edit;
-      if (edit==1){
-        this.edit=false;
-      }else{
-        this.edit=true;
+    created() {
+      let query = this.$route.query.id;
+      let edit = this.$route.query.edit;
+      if (edit == 1) {
+        this.edit = false;
+      } else {
+        this.edit = true;
       }
-      axios.get('/user/getGoodsDetail?id='+query+'').then(res=>{
-        this.form=res.data.data;
+      axios.get('/user/getGoodsDetail?id=' + query + '').then(res => {
+        this.form = res.data.data;
         console.log(this.form);
-        this.form.date=new Date(this.form.date)
+        this.form.date = new Date(this.form.date)
       })
     },
-    components:{
+    components: {
       inputText
     }
   };
-  </script>
-  
-  <style lang="less">
-      .logo{
-        background: #66b1ff;
-        width: 180px;
-        height: 80px;
-        background-image: url("../../src/lost.jpg");
-        background-size:100% 100%;
-      }
-      .tips{
-        color: #66b1ff;
-        font-size: 14px;
-      }
-      .nav{
-        color: #b8b8b8;
-        cursor: pointer;
-        .lost:hover{
-          color: #66b1ff;
-        }
-      }
-  
-      .avatar{
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .avatar img{
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          border:2px solid#fff;
-          cursor: pointer;
-          margin-right: 20px;
-      }
-      .avatar img:hover{
-          border:2px solid#66b1ff;
-      }
-      .el-menu-item-group__title{
-        padding: 0;
-      }
-      .el-submenu__title{
-        padding: 0 40px; 
-      }
-      .el-submenu .el-menu-item{
-        padding: 0 60px; 
-      }
-      .el-header {
-        background-color: #fff;
-        color: #333;
-        line-height: 60px;
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        justify-content: space-between;
-      }
-      .aside{
-        width: 180px;
-        height: 100%;
-        position: relative;
-        overflow: hidden;
-      }
-      .main{
-        width: 100%;
-        height: 100%;
-        position: relative;
-        overflow: hidden; 
-        background: #f5f5f5;
-      }
-      .el-aside,.el-main {
-        color: #333;
-        position: absolute;
-        left: 0;
-        top: 0;
-        right: -17px;
-        bottom: 0;
-        overflow-x: hidden;
-        overflow-y: scroll;
-      }
-      .el-main{
-        padding:20px;
-      }
 
-  </style>
-  
+</script>
+
+<style lang="less" scoped>
+  .logo {
+    background: #66b1ff;
+    width: 180px;
+    height: 80px;
+    background-image: url("../../src/lost.jpg");
+    background-size: 100% 100%;
+  }
+
+  .tips {
+    color: #66b1ff;
+    font-size: 14px;
+  }
+
+  .nav {
+    color: #b8b8b8;
+    cursor: pointer;
+
+    .lost:hover {
+      color: #66b1ff;
+    }
+  }
+
+  .avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .avatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid#fff;
+    cursor: pointer;
+    margin-right: 20px;
+  }
+
+  .avatar img:hover {
+    border: 2px solid#66b1ff;
+  }
+
+  .el-menu-item-group__title {
+    padding: 0;
+  }
+
+  .el-submenu__title {
+    padding: 0 40px;
+  }
+
+  .el-submenu .el-menu-item {
+    padding: 0 60px;
+  }
+
+  .el-header {
+    background-color: #fff;
+    color: #333;
+    line-height: 60px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .aside {
+    width: 180px;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .main {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    background: #f5f5f5;
+  }
+
+  .el-aside,
+  .el-main {
+    color: #333;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: -17px;
+    bottom: 0;
+    overflow-x: hidden;
+    overflow-y: scroll;
+  }
+
+  .el-main {
+    padding: 20px;
+  }
+
+</style>
