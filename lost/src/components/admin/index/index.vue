@@ -1,5 +1,5 @@
 <template>
-  <div class="index">
+  <div class="index" v-if="!mobile">
     <el-container style="position:fixed;top:0;bottom:0;left:0;width:100%;">
       <div class="aside">
         <el-aside width="200px" style="background-color: #eee">
@@ -101,17 +101,21 @@
         <div class="footer">
           <el-button class="delBtn" type="primary" @click="handleDelAll">批量删除</el-button>
           <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-            :current-page="currentPage" :page-sizes="[10]" :page-size="100"
+            :current-page="currentPage" :page-sizes="[10]" :page-size="10"
             layout="total, sizes, prev, pager, next, jumper" :total="total" class="pager">
           </el-pagination>
         </div>
       </el-container>
     </el-container>
   </div>
+  <div class="mobileindex" v-else-if="mobile">
+      <Header :title="title"></Header>
+  </div>
 </template>
 
 <script>
   import axios from 'axios'
+  import Header from '../../common/header';
   export default {
     data() {
       return {
@@ -148,16 +152,22 @@
           address: '',
           type: '0',
           state: ''
-        }
+        },
+        screenWidth: document.body.clientWidth,
+        mobile: false,
+        title:"首页"
       }
     },
     methods: {
       //分页
-      handleSizeChange(val) {
-        console.log(val)
-      },
+      handleSizeChange(val) {},
       handleCurrentChange(val) {
         console.log(val)
+        let params = {
+          page: val,
+          pagesize: 10
+        }
+        this.getPagerData(params)
       },
       //导航栏
       handleSelect(key, keyPath) {
@@ -260,7 +270,6 @@
       //批量删除失物
       handleSelectionChange(val) {
         this.delArray = val;
-        console.log(this.delArray)
       },
       handleDelAll() {
         let array = [];
@@ -275,7 +284,6 @@
           axios.post('user/deleteGoodsAll', {
             delArray: array
           }).then(res => {
-            console.log(res)
             this.getData();
           })
         }).catch(() => {
@@ -291,15 +299,30 @@
           params
         }).then(res => {
           if (res) {
-            console.log(res)
-            let data = res.data.data.reverse();
+            let data = res.data.data;
             this.tableData = data;
             this.total = res.data.total;
           }
         })
-      }
+      },
+      //分页获取数据
+      getPagerData(params) {
+        axios.get('/user/getGoodsList', {
+          params
+        }).then(res => {
+          if (res) {
+            let data = res.data.data;
+            this.tableData = data;
+          }
+        })
+      },
     },
-    beforeMount() {
+    created() {
+      if(document.body.clientWidth<1024){
+        this.mobile=true;
+      }else{
+        this.mobile=false;
+      }
       this.name = this.$cookies.get("username");
       this.id = this.$cookies.get("id");
       this.sex = this.$cookies.get("sex");
@@ -313,10 +336,28 @@
           path: "login"
         });
       }
-
-    },
-    created() {
       this.getData();
+    },
+    mounted() {
+      const that = this
+      window.onresize = () => {
+        return (() => {
+          window.screenWidth = document.body.clientWidth
+          that.screenWidth = window.screenWidth
+        })()
+      }
+    },
+    watch: {
+      screenWidth(val) {
+        if (val<=1024) {
+          this.mobile=true;
+        }else{
+          this.mobile=false;
+        }
+      }
+    },
+    components: {
+      Header
     }
   };
 

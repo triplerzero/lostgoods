@@ -26,4 +26,7 @@ a{
   padding:0 10px;
   color:#66b1ff;
 }
+html{
+  font-size: 100px;
+}
 </style>

@@ -117,7 +117,7 @@ Router.post('/addGoods', (req, res) => {
 //获取失物列表信息
 Router.get('/getGoodsList', (req, res) => {
   if (JSON.stringify(req.query) == "{}") {
-    let goodlist = Goods.find({}).limit(10)
+    let goodlist = Goods.find({}).limit(10).sort({'_id': -1})
     let total=Goods.find({}).count();
     let num=0;
     total.exec((err,doc)=>{
@@ -138,10 +138,10 @@ Router.get('/getGoodsList', (req, res) => {
       }
     })
   }
-  if (req.page && req.pagesize) {
-    let page = req.body.page;
-    let pagesize = req.body.pagesize;
-    let queryResult = Goods.find(req.body.queryCondition).limit(pageSize).skip((page - 1) * pageSize).sort({
+  if (req.query.page && req.query.pagesize) {
+    let page = Number(req.query.page);
+    let pageSize = Number(req.query.pagesize);
+    let queryResult = Goods.find({}).limit(pageSize).skip((page - 1) * pageSize).sort({
       '_id': -1
     });
     queryResult.exec((err, doc) => {
