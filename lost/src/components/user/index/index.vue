@@ -114,14 +114,20 @@
       <el-input placeholder="名称/发布类型/状态/特征" class="searchInput"></el-input>
       <el-button type="primary" class="searchBtn">搜索</el-button>
     </div>
-    <div class="mobileList">
-      <div class="ListItem">
-        <div class="left">
-          <img src="http://img.dev.terran.wxpai.cn/upload/ec6703d8-8cb7-4628-ac8b-638610ecba94.jpg" alt="">
-        </div>
-        <div class="right">
-          <p>名称：哈哈</p>
-          <p>类型：失物招领</p>
+    <div class="wrapper" ref="wrapper" style="height:200px">
+      <div class="mobileList">
+        <div class="ListItem" v-for="(item,index) in lists">
+          <div class="left">
+            <img :src="item.pic" alt="" v-if="item.pic">
+            <img src="../../src/pic.jpg" alt="" v-if="!item.pic">
+          </div>
+          <div class="right">
+            <p>名称：{{item.goodsname}}</p>
+            <p>类型：{{type[item.type]}}</p>
+            <p>发布人学号：{{item.id}}</p>
+            <p>发布人姓名：{{item.name}}</p>
+            <p>物品特征：{{item.feature}}</p>
+          </div>
         </div>
       </div>
     </div>
@@ -134,7 +140,7 @@
   import axios from 'axios';
   import Header from '../../common/header';
   import Footer from '../../common/footer';
-
+  import BScroll from 'better-scroll';
   export default {
     data() {
       return {
@@ -174,7 +180,9 @@
         },
         screenWidth: document.body.clientWidth,
         mobile: false,
-        title: "失物信息"
+        title: "失物信息",
+        lists: [],
+        scroll: ""
       }
     },
     methods: {
@@ -305,6 +313,7 @@
         if (res.status == 200 && res.data.code == 0) {
           let data = res.data.data;
           this.tableData = data;
+          this.lists = res.data.data;
         }
       })
     },
@@ -316,6 +325,9 @@
           that.screenWidth = window.screenWidth
         })()
       }
+      this.$nextTick(() => {
+        this.scroll = new Bscroll(this.$refs.wrapper, {})
+      })
     },
     watch: {
       screenWidth(val) {
@@ -498,6 +510,7 @@
         display: flex;
         padding: .5rem;
         background: #fff;
+        margin-bottom: .5rem;
 
         .left {
           width: 5rem;
@@ -514,7 +527,7 @@
         margin-left: 1rem;
 
         p {
-          font-size: .7rem;
+          font-size: .6rem;
           margin-bottom: .25rem;
           text-align: left;
         }
