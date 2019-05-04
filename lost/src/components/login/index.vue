@@ -1,7 +1,7 @@
 <template>
-  <div v-if="!mobile">
-    <h1 class="loginTitle">高校失物管理系统</h1>
+  <div class="PcLogin">
     <div class="login">
+      <h1 class="loginTitle">高校失物管理系统</h1>
       <el-row :gutter="8" justify="center" type='flex'>
         <el-col :xs="24" :sm="12" :md="10" :lg="8" :xl="8">
           <el-input suffix-icon="el-icon-edit" placeholder="请输入学号" v-model="user"></el-input>
@@ -18,9 +18,6 @@
       </el-row>
     </div>
   </div>
-  <div v-else-if="mobile">
-    登陆
-  </div>
 </template>
 
 <script>
@@ -33,9 +30,7 @@
         eyeOpen: false,
         user: "",
         pwd: "",
-        radio: "1",
-        mobile: false,
-        screenWidth: document.body.clientWidth
+        radio: "1"
       };
     },
     methods: {
@@ -105,48 +100,34 @@
       }
     },
     created() {
-      if (document.body.clientWidth < 1008) {
-        this.mobile = true;
-      } else {
-        this.mobile = false;
-      }
     },
     mounted() {
-      const that = this
-      window.onresize = () => {
-        return (() => {
-          window.screenWidth = document.body.clientWidth
-          that.screenWidth = window.screenWidth
-        })()
-      }
-    },
-    watch: {
-      screenWidth(val) {
-        if (val <= 1008) {
-          this.mobile = true;
-        } else {
-          this.mobile = false;
-        }
-      }
-    },
-    components: {
-      Header
     }
   };
 
 </script>
 
 <style lang="less" scoped>
+  .PcLogin {
+    font-size: 16px;
+
+    h1 {
+      margin-bottom: 1rem;
+    }
+  }
+
   i {
-    font-size: 24px;
+    font-size: 1.2rem;
     color: #c0c4cc;
   }
 
+  .el-input {
+    margin-bottom: 1rem;
+  }
+
   .loginTitle {
-    position: fixed;
-    left: 50%;
-    top: 20%;
-    transform: translate(-50%, -50%);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
   }
 
   .login {
@@ -156,14 +137,10 @@
     transform: translate(-50%, -50%);
     width: 90%;
 
-    .el-input {
-      margin-bottom: 20px;
-    }
-
     .loginBtn {
       width: 100%;
       margin-left: 0;
-      margin-bottom: 20px;
+      margin-bottom: 1rem;
     }
   }
 

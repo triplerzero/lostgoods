@@ -19,7 +19,8 @@
     "utility": "^1.16.1",
     "vue": "^2.5.2",
     "vue-cookies": "^1.5.13",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "vue-waterfall-easy": "^2.4.3"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

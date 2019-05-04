@@ -1,5 +1,5 @@
 <template>
-  <div class="index" style="position:fixed;top:0;bottom:0;left:0;width:100%;">
+  <div class="index" style="position:fixed;top:0;bottom:0;left:0;width:100%;" v-if="!mobile">
     <el-container style="height: 100%; border: 1px solid #eee">
       <div class="aside">
         <el-aside width="200px" style="background-color: #eee">
@@ -108,10 +108,33 @@
       </span>
     </el-dialog>
   </div>
+  <div v-else-if="mobile" class="mobileIndex">
+    <Header :title="title"></Header>
+    <div class="mobilesSearch">
+      <el-input placeholder="名称/发布类型/状态/特征" class="searchInput"></el-input>
+      <el-button type="primary" class="searchBtn">搜索</el-button>
+    </div>
+    <div class="mobileList">
+      <div class="ListItem">
+        <div class="left">
+          <img src="http://img.dev.terran.wxpai.cn/upload/ec6703d8-8cb7-4628-ac8b-638610ecba94.jpg" alt="">
+        </div>
+        <div class="right">
+          <p>名称：哈哈</p>
+          <p>类型：失物招领</p>
+        </div>
+      </div>
+    </div>
+    <Footer></Footer>
+  </div>
+  </div>
 </template>
 
 <script>
-  import axios from 'axios'
+  import axios from 'axios';
+  import Header from '../../common/header';
+  import Footer from '../../common/footer';
+
   export default {
     data() {
       return {
@@ -148,7 +171,10 @@
           address: '',
           type: '0',
           state: ''
-        }
+        },
+        screenWidth: document.body.clientWidth,
+        mobile: false,
+        title: "失物信息"
       }
     },
     methods: {
@@ -270,12 +296,39 @@
 
     },
     created() {
+      if (document.body.clientWidth < 1024) {
+        this.mobile = true;
+      } else {
+        this.mobile = false;
+      }
       axios.get('/user/getGoodsList').then(res => {
         if (res.status == 200 && res.data.code == 0) {
-          let data = res.data.data.reverse();
+          let data = res.data.data;
           this.tableData = data;
         }
       })
+    },
+    mounted() {
+      const that = this
+      window.onresize = () => {
+        return (() => {
+          window.screenWidth = document.body.clientWidth
+          that.screenWidth = window.screenWidth
+        })()
+      }
+    },
+    watch: {
+      screenWidth(val) {
+        if (val <= 1024) {
+          this.mobile = true;
+        } else {
+          this.mobile = false;
+        }
+      }
+    },
+    components: {
+      Header,
+      Footer
     }
   };
 
@@ -425,6 +478,48 @@
     right: 12px;
     -webkit-transition: all .3s;
     transition: all .3s;
+  }
+
+  .mobileIndex {
+    margin-top: 3rem;
+
+    .mobilesSearch {
+      display: flex;
+
+      .searchInput {
+        margin-right: .5rem;
+      }
+
+      margin-bottom:.5rem;
+    }
+
+    .mobileList {
+      .ListItem {
+        display: flex;
+        padding: .5rem;
+        background: #fff;
+
+        .left {
+          width: 5rem;
+          height: 5rem;
+
+          img {
+            width: 100%;
+            height: 100%;
+          }
+        }
+      }
+
+      .right {
+        margin-left: 1rem;
+
+        p {
+          font-size: .7rem;
+          margin-bottom: .25rem;
+          text-align: left;
+        }
+      }
+    }
   }
 
 </style>
