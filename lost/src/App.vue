@@ -22,6 +22,7 @@
 
   body {
     background: #f5f5f5;
+    margin: 0;
   }
 
   a {
@@ -36,5 +37,8 @@
   html {
     font-size: 20px;
   }
+  .avatar span {
+    margin-right: 10px;
+}
 
 </style>

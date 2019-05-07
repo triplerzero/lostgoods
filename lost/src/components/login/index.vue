@@ -1,7 +1,7 @@
 <template>
   <div class="PcLogin">
     <div class="login">
-      <h1 class="loginTitle">高校失物管理系统</h1>
+      <h1 class="loginTitle">高校失物招领管理系统</h1>
       <el-row :gutter="8" justify="center" type='flex'>
         <el-col :xs="24" :sm="12" :md="10" :lg="8" :xl="8">
           <el-input suffix-icon="el-icon-edit" placeholder="请输入学号" v-model="user"></el-input>

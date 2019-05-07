@@ -117,11 +117,13 @@ Router.post('/addGoods', (req, res) => {
 //获取失物列表信息
 Router.get('/getGoodsList', (req, res) => {
   if (JSON.stringify(req.query) == "{}") {
-    let goodlist = Goods.find({}).limit(10).sort({'_id': -1})
-    let total=Goods.find({}).count();
-    let num=0;
-    total.exec((err,doc)=>{
-      num=doc 
+    let goodlist = Goods.find({}).limit(10).sort({
+      '_id': -1
+    })
+    let total = Goods.find({}).count();
+    let num = 0;
+    total.exec((err, doc) => {
+      num = doc
     })
     goodlist.exec((err, doc) => {
       if (!doc) {
@@ -133,10 +135,203 @@ Router.get('/getGoodsList', (req, res) => {
         return res.json({
           code: 0,
           data: doc,
-          total:num
+          total: num
         })
       }
     })
+  } else {
+    // Goods.find({
+    //     $and: [{
+    //         type:req.query.type,
+    //         goodsname: {
+    //           $regex: req.query.goodsname
+    //         }
+    //       },
+    //       {
+    //         feature: {
+    //           $regex: req.query.feature
+    //         }
+    //       },
+    //       {
+    //         address: {
+    //           $regex: req.query.address
+    //         }
+    //       }, {
+    //         state: req.query.state
+    //       }
+    //     ]
+    //   }, (err, doc) => {
+    //     if (!doc) {
+    //       return res.json({
+    //         code: 1,
+    //         msg: '没有数据返回'
+    //       })
+    //     } else {
+    //       return res.json({
+    //         code: 0,
+    //         data: doc
+    //       })
+    //     }
+    //   })
+
+    if (req.query.userId) {
+      Goods.find({
+        id: req.query.userId
+      }, (err, doc) => {
+        if (!doc) {
+          return res.json({
+            code: 1,
+            msg: '没有数据返回'
+          })
+        } else {
+          return res.json({
+            code: 0,
+            data: doc,
+            msg: "学生发布记录"
+          })
+        }
+      })
+    }
+    if (req.query.type) {
+      if (req.query.type == "0") {
+        let goodlist = Goods.find({}).limit(10).sort({
+          '_id': -1
+        })
+        let total = Goods.find({}).count();
+        let num = 0;
+        total.exec((err, doc) => {
+          num = doc
+        })
+        goodlist.exec((err, doc) => {
+          if (!doc) {
+            return res.json({
+              code: 1,
+              msg: '没有数据返回'
+            })
+          } else {
+            return res.json({
+              code: 0,
+              data: doc,
+              total: num
+            })
+          }
+        })
+      } else {
+        let goodlist = Goods.find({
+          type: req.query.type
+        }).limit(10).sort({
+          '_id': -1
+        })
+        let total = Goods.find({
+          type: req.query.type
+        }).count();
+        let num = 0;
+        total.exec((err, doc) => {
+          num = doc
+        })
+        goodlist.exec((err, doc) => {
+          if (!doc) {
+            return res.json({
+              code: 1,
+              msg: '没有数据返回'
+            })
+          } else {
+            return res.json({
+              code: 0,
+              data: doc,
+              total: num
+            })
+          }
+        })
+      }
+    }
+    if (req.query.id) {
+      Goods.find({
+        "_id": req.query.id
+      }, (err, doc) => {
+        if (!doc) {
+          return res.json({
+            code: 1,
+            msg: '没有数据返回'
+          })
+        } else {
+          return res.json({
+            code: 0,
+            data: doc
+          })
+        }
+      })
+    }
+    if (req.query.goodsname || req.query.feature || req.query.address) {
+      if (req.query.stype == "0") {
+        Goods.find({
+          $and: [{
+              goodsname: {
+                $regex: req.query.goodsname
+              }
+            },
+            {
+              feature: {
+                $regex: req.query.feature
+              }
+            },
+            {
+              address: {
+                $regex: req.query.address
+              }
+            }, {
+              state: req.query.state
+            }
+          ]
+        }, (err, doc) => {
+          if (!doc) {
+            return res.json({
+              code: 1,
+              msg: '没有数据返回'
+            })
+          } else {
+            return res.json({
+              code: 0,
+              data: doc
+            })
+          }
+        })
+      } else {
+        Goods.find({
+          $and: [{
+              goodsname: {
+                $regex: req.query.goodsname
+              }
+            },
+            {
+              feature: {
+                $regex: req.query.feature
+              }
+            },
+            {
+              address: {
+                $regex: req.query.address
+              }
+            },
+            {
+              type: req.query.stype
+            }
+          ]
+        }, (err, doc) => {
+          if (!doc) {
+            return res.json({
+              code: 1,
+              msg: '没有数据返回'
+            })
+          } else {
+            return res.json({
+              code: 0,
+              data: doc
+            })
+          }
+        })
+      }
+    }
   }
   if (req.query.page && req.query.pagesize) {
     let page = Number(req.query.page);
@@ -157,144 +352,6 @@ Router.get('/getGoodsList', (req, res) => {
         })
       }
     })
-  }
-  if (req.query.userId) {
-    Goods.find({
-      id: req.query.userId
-    }, (err, doc) => {
-      if (!doc) {
-        return res.json({
-          code: 1,
-          msg: '没有数据返回'
-        })
-      } else {
-        return res.json({
-          code: 0,
-          data: doc,
-          msg: "学生发布记录"
-        })
-      }
-    })
-  }
-  if (req.query.type) {
-    if (req.query.type == "0") {
-      Goods.find({}, (err, doc) => {
-        if (!doc) {
-          return res.json({
-            code: 1,
-            msg: '没有数据返回'
-          })
-        } else {
-          return res.json({
-            code: 0,
-            data: doc
-          })
-        }
-      })
-    } else {
-      Goods.find({
-        type: req.query.type
-      }, (err, doc) => {
-        if (!doc) {
-          return res.json({
-            code: 1,
-            msg: '没有数据返回'
-          })
-        } else {
-          return res.json({
-            code: 0,
-            data: doc
-          })
-        }
-      })
-    }
-  }
-  if (req.query.id) {
-    Goods.find({
-      "_id": req.query.id
-    }, (err, doc) => {
-      if (!doc) {
-        return res.json({
-          code: 1,
-          msg: '没有数据返回'
-        })
-      } else {
-        return res.json({
-          code: 0,
-          data: doc
-        })
-      }
-    })
-  }
-  if (req.query.goodsname || req.query.feature || req.query.address || req.query.state) {
-    if (req.query.stype == "0") {
-      Goods.find({
-        $and: [{
-            goodsname: {
-              $regex: req.query.goodsname
-            }
-          },
-          {
-            feature: {
-              $regex: req.query.feature
-            }
-          },
-          {
-            address: {
-              $regex: req.query.address
-            }
-          }, {
-            state: req.query.state
-          }
-        ]
-      }, (err, doc) => {
-        if (!doc) {
-          return res.json({
-            code: 1,
-            msg: '没有数据返回'
-          })
-        } else {
-          return res.json({
-            code: 0,
-            data: doc
-          })
-        }
-      })
-    } else {
-      Goods.find({
-        $and: [{
-            goodsname: {
-              $regex: req.query.goodsname
-            }
-          },
-          {
-            feature: {
-              $regex: req.query.feature
-            }
-          },
-          {
-            address: {
-              $regex: req.query.address
-            }
-          },
-          {
-            type: req.query.stype
-          }
-        ]
-      }, (err, doc) => {
-        if (!doc) {
-          return res.json({
-            code: 1,
-            msg: '没有数据返回'
-          })
-        } else {
-          return res.json({
-            code: 0,
-            data: doc
-          })
-        }
-      })
-    }
   }
 })
 //获取失物详情信息

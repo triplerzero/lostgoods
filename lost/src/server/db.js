@@ -11,6 +11,7 @@ const models={
     userName:{type:'String',require:'true'},
     sex:{type:'String',require:'true'},
     pwd:{type:'String',require:'true'}
+    // power:{type:Number,require:'true'}
   },
   admin:{
     adminId:{type:'String',require:'true'},
@@ -18,12 +19,6 @@ const models={
     sex:{type:'String',require:'true'},
     pwd:{type:'String',require:'true'}
   },
-  // superadmin:{
-  //   sadminId:{type:'String',require:'true'},
-  //   sadminName:{type:'String',require:'true'},
-  //   ssex:{type:'String',require:'true'},
-  //   spwd:{type:'String',require:'true'}
-  // },
   goods:{
     date:{type:'String'},
     id:{type:'String'},

@@ -97,6 +97,12 @@
             </el-table>
           </el-main>
         </div>
+        <div class="footer">
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+            :current-page="currentPage" :page-sizes="[10]" :page-size="10"
+            layout="total, sizes, prev, pager, next, jumper" :total="total" class="pager">
+          </el-pagination>
+        </div>
       </el-container>
     </el-container>
     <el-dialog title="请填写举报理由" :visible.sync="centerDialogVisible" :modal-append-to-body='false' width="30%" center>
@@ -114,24 +120,27 @@
       <el-input placeholder="名称/发布类型/状态/特征" class="searchInput"></el-input>
       <el-button type="primary" class="searchBtn">搜索</el-button>
     </div>
-    <div class="wrapper" ref="wrapper" style="height:200px">
-      <div class="mobileList">
-        <div class="ListItem" v-for="(item,index) in lists">
-          <div class="left">
-            <img :src="item.pic" alt="" v-if="item.pic">
-            <img src="../../src/pic.jpg" alt="" v-if="!item.pic">
-          </div>
-          <div class="right">
-            <p>名称：{{item.goodsname}}</p>
-            <p>类型：{{type[item.type]}}</p>
-            <p>发布人学号：{{item.id}}</p>
-            <p>发布人姓名：{{item.name}}</p>
-            <p>物品特征：{{item.feature}}</p>
+    <div class="scrollmain">
+      <scroll :pullup='true' @scrollToEnd='scrollToEnd' class="main-content">
+        <div class="mobileList">
+          <div class="ListItem" v-for="(item,index) in lists" @click="handleDetail(item._id)">
+            <div class="left">
+              <img :src="item.pic" alt="" v-if="item.pic">
+              <img src="../../src/pic.jpg" alt="" v-if="!item.pic">
+            </div>
+            <div class="right">
+              <p>名称：{{item.goodsname}}</p>
+              <p>类型：{{type[item.type]}}</p>
+              <p>发布人学号：{{item.id}}</p>
+              <p>发布人姓名：{{item.name}}</p>
+              <p>物品特征：{{item.feature}}</p>
+            </div>
+            <div class="icon"></div>
           </div>
         </div>
-      </div>
+      </scroll>
     </div>
-    <Footer></Footer>
+    <Footer :curr="curr"></Footer>
   </div>
   </div>
 </template>
@@ -140,7 +149,7 @@
   import axios from 'axios';
   import Header from '../../common/header';
   import Footer from '../../common/footer';
-  import BScroll from 'better-scroll';
+  import Scroll from '../../common/scroll/scroll';
   export default {
     data() {
       return {
@@ -182,10 +191,41 @@
         mobile: false,
         title: "失物信息",
         lists: [],
-        scroll: ""
+        curr: 1,
+        total: 0,
+        currentPage: 1,
       }
     },
     methods: {
+      //移动端详情跳转
+      handleDetail(item){
+        this.$router.push({
+          path: "/goodsdetails",
+          query: {
+            id: item
+          }
+        });
+      },
+      //分页
+      handleSizeChange(val) {},
+      handleCurrentChange(val) {
+        let params = {
+          page: val,
+          pagesize: 10
+        }
+        this.getPagerData(params)
+      },
+      //分页获取数据
+      getPagerData(params) {
+        axios.get('/user/getGoodsList', {
+          params
+        }).then(res => {
+          if (res) {
+            let data = res.data.data;
+            this.tableData = data;
+          }
+        })
+      },
       //导航栏
       handleSelect(key, keyPath) {
         switch (key) {
@@ -284,8 +324,14 @@
           if (res) {
             let data = res.data.data;
             this.tableData = data;
+            this.total = res.data.total;
+            this.lists=res.data.data;
           }
         })
+      },
+      //滚动加载
+      scrollToEnd() {
+
       }
     },
     beforeMount() {
@@ -309,13 +355,7 @@
       } else {
         this.mobile = false;
       }
-      axios.get('/user/getGoodsList').then(res => {
-        if (res.status == 200 && res.data.code == 0) {
-          let data = res.data.data;
-          this.tableData = data;
-          this.lists = res.data.data;
-        }
-      })
+      this.getData()
     },
     mounted() {
       const that = this
@@ -325,9 +365,6 @@
           that.screenWidth = window.screenWidth
         })()
       }
-      this.$nextTick(() => {
-        this.scroll = new Bscroll(this.$refs.wrapper, {})
-      })
     },
     watch: {
       screenWidth(val) {
@@ -340,7 +377,8 @@
     },
     components: {
       Header,
-      Footer
+      Footer,
+      Scroll
     }
   };
 
@@ -507,6 +545,7 @@
 
     .mobileList {
       .ListItem {
+        position: relative;
         display: flex;
         padding: .5rem;
         background: #fff;
@@ -525,13 +564,56 @@
 
       .right {
         margin-left: 1rem;
+        width: 60%;
 
         p {
           font-size: .6rem;
           margin-bottom: .25rem;
           text-align: left;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
         }
       }
+    }
+
+    .icon {
+      width: 2rem;
+      height: 2rem;
+      background: url('/static/img/go.png') no-repeat;
+      background-size: .7rem .7rem;
+      background-position: right center;
+      position: absolute;
+      right: 2%;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+
+  .scrollmain {
+    position: fixed;
+    width: 100%;
+    top: 5.5rem;
+    bottom: 3.5rem;
+  }
+
+  .main-content {
+    height: 100%;
+    overflow: hidden
+  }
+
+  .footer {
+    margin-bottom: 20px;
+
+    .delBtn {
+      float: left;
+      margin: 0 20px 20px;
+      width: 8%;
+      min-width: 100px;
+    }
+
+    .pager {
+      float: right;
     }
   }
 

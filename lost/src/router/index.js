@@ -8,6 +8,8 @@ import Addgoods from '@/components/user/addgoods'
 import Goodslist from '@/components/user/goodslist'
 import Report from '@/components/admin/report'
 import ReportDetails from '@/components/admin/goodsdetails'
+import Center from '@/components/user/center'
+
 Vue.use(Router)
 
 export default new Router({
@@ -54,6 +56,10 @@ export default new Router({
       path:'/reportdetails',
       name:'reportdetails',
       component:ReportDetails
+    },{
+      path:'/user/center',
+      name:'center',
+      component:Center
     }
   ]
 })

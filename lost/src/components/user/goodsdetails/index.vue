@@ -1,6 +1,6 @@
 <template>
   <div class="index">
-    <el-container style="position:fixed;top:0;bottom:0;left:0;width:100%;">
+    <el-container style="position:fixed;top:0;bottom:0;left:0;width:100%;" v-if="!mobile">
       <div class="aside">
         <el-aside width="200px" style="background-color: #eee">
           <el-menu :default-openeds="['1']" :default-active="index" @select="handleSelect">
