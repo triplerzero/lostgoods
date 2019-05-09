@@ -117,8 +117,8 @@
   <div v-else-if="mobile" class="mobileIndex">
     <Header :title="title"></Header>
     <div class="mobilesSearch">
-      <el-input placeholder="名称/发布类型/状态/特征" class="searchInput"></el-input>
-      <el-button type="primary" class="searchBtn">搜索</el-button>
+      <el-input placeholder="物品名称/物品特征" class="searchInput" v-model="searchCon"></el-input>
+      <el-button type="primary" class="searchBtn" @click="search">搜索</el-button>
     </div>
     <div class="scrollmain">
       <scroll :pullup='true' @scrollToEnd='scrollToEnd' class="main-content">
@@ -194,11 +194,12 @@
         curr: 1,
         total: 0,
         currentPage: 1,
+        searchCon:""
       }
     },
     methods: {
       //移动端详情跳转
-      handleDetail(item){
+      handleDetail(item) {
         this.$router.push({
           path: "/goodsdetails",
           query: {
@@ -317,6 +318,20 @@
           this.getData()
         }
       },
+      //移动端搜索
+      search() {
+        axios.get('/user/getGoods', {
+          params: {
+            search:this.searchCon
+          }
+        }).then(res => {
+          if (res) {
+            let data = res.data.data;
+            this.lists = data;
+            console.log(res)
+          }
+        })
+      },
       getData(params) {
         axios.get('/user/getGoodsList', {
           params
@@ -325,7 +340,7 @@
             let data = res.data.data;
             this.tableData = data;
             this.total = res.data.total;
-            this.lists=res.data.data;
+            this.lists = res.data.data;
           }
         })
       },

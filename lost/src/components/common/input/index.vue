@@ -52,7 +52,7 @@
       <el-input v-model="form.receivername" placeholder="领取人姓名" :disabled="edit"></el-input>
     </div>
     <div class="item" v-if="form.state=='2'">
-      <div class="text"><label>领取人联系方式:</label></div>
+      <div class="text"><label>领取人手机:</label></div>
       <el-input v-model="form.receiverphone" placeholder="领取人联系方式" :disabled="edit"></el-input>
     </div>
     <div class="item">
@@ -209,12 +209,23 @@
           }
           if (this.form.receiverphone == "") {
             this.$message({
-              message: "领取人联系方式不能为空",
+              message: "领取人手机不能为空",
               type: "error",
               center: "true"
             });
             this.btn = false;
             return false;
+          } else {
+            let valid_rule = /^(13[0-9]|14[5-9]|15[012356789]|166|17[0-8]|18[0-9]|19[8-9])[0-9]{8}$/; // 手机号码校验规则
+            if (!valid_rule.test(this.form.phone)) {
+              this.$message({
+                message: "领取人手机号码格式有误",
+                type: "error",
+                center: "true"
+              });
+              this.btn = false;
+              return false;
+            }
           }
         }
         if (this.form.feature == "") {

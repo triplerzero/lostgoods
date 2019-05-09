@@ -354,6 +354,44 @@ Router.get('/getGoodsList', (req, res) => {
     })
   }
 })
+
+//获取失物列表（移动端）
+Router.get('/getGoods', (req, res) => {
+  console.log(req.query.search)
+  let searchCon = req.query.search.split(' ');
+  let goodsname = Goods.find({
+    $and: [{
+      goodsname: {
+        $regex: searchCon[0]
+      }
+    }, {
+      feature: {
+        $regex: searchCon[1]
+      }
+    }]
+  }).limit(10).sort({
+    '_id': -1
+  })
+  let total = Goods.find({}).count();
+  let num = 0;
+  total.exec((err, doc) => {
+    num = doc
+  })
+  goodsname.exec((err, doc) => {
+    if (!doc) {
+      return res.json({
+        code: 1,
+        msg: '没有数据返回'
+      })
+    } else {
+      return res.json({
+        code: 0,
+        data: doc
+      })
+    }
+  })
+})
+
 //获取失物详情信息
 Router.get('/getGoodsDetail', (req, res) => {
   Goods.findOne({

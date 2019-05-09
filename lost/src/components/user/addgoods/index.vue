@@ -284,6 +284,7 @@
   .el-main {
     padding: 20px;
   }
+
   .el-upload {
     border: 1px dashed #d9d9d9
   }
@@ -327,8 +328,13 @@
     left: 5.8rem !important;
     bottom: .4rem !important;
   }
+
   .el-upload {
     border: 1px dashed #d9d9d9
+  }
+
+  .el-scrollbar__wrap {
+    margin: 0 !important;
   }
 
 </style>
