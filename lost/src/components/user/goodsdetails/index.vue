@@ -1,6 +1,6 @@
 <template>
-  <div class="index">
-    <el-container style="position:fixed;top:0;bottom:0;left:0;width:100%;" v-if="!mobile">
+  <div class="index" v-if="!mobile">
+    <el-container style="position:fixed;top:0;bottom:0;left:0;width:100%;">
       <div class="aside">
         <el-aside width="200px" style="background-color: #eee">
           <el-menu :default-openeds="['1']" :default-active="index" @select="handleSelect">
@@ -53,11 +53,18 @@
       </span>
     </el-dialog>
   </div>
+  <div class="mobileDeatil" v-else-if="mobile">
+    <Header :title="title"></Header>
+    <div class="mobileDeatilMsg">
+      <input-text :form='form' :edit='edit' @save="save" @report="mobilereport"></input-text>
+    </div>
+  </div>
 </template>
 
 <script>
   import inputText from '../../common/input';
   import axios from 'axios';
+  import Header from '../../common/header';
   export default {
     data() {
       return {
@@ -69,6 +76,8 @@
         type: 0,
         reason: '',
         centerDialogVisible: false,
+        screenWidth: document.body.clientWidth,
+        mobile: false,
         form: {
           _id: '',
           id: this.userid,
@@ -77,7 +86,17 @@
           type: '',
           radio: '1',
           name: '',
-          date: new Date()
+          date: new Date(),
+        },
+        title: "失物详情",
+        date: '',
+        goodstype: {
+          "1": "失物招领",
+          "2": "寻物启事"
+        },
+        state: {
+          "1": "未领取",
+          "2": "已领取"
         }
       }
     },
@@ -161,6 +180,9 @@
             center: "true"
           });
         })
+      },
+      mobilereport() {
+        console.log(2222)
       }
     },
     beforeMount() {
@@ -181,6 +203,11 @@
 
     },
     created() {
+      if (document.body.clientWidth < 1024) {
+        this.mobile = true;
+      } else {
+        this.mobile = false;
+      }
       let query = this.$route.query.id;
       let edit = this.$route.query.edit;
       if (edit == 1) {
@@ -190,14 +217,33 @@
       }
       axios.get('/user/getGoodsDetail?id=' + query + '').then(res => {
         this.form = res.data.data;
-        console.log(this.form);
+        this.date = res.data.data.date;
         this.form.date = new Date(this.form.date)
       })
     },
+    mounted() {
+      const that = this
+      window.onresize = () => {
+        return (() => {
+          window.screenWidth = document.body.clientWidth
+          that.screenWidth = window.screenWidth
+        })()
+      }
+    },
+    watch: {
+      screenWidth(val) {
+        if (val <= 1024) {
+          this.mobile = true;
+        } else {
+          this.mobile = false;
+        }
+      }
+    },
     components: {
-      inputText
+      inputText,
+      Header
     }
-  };
+  }
 
 </script>
 
@@ -294,6 +340,62 @@
 
   .el-main {
     padding: 20px;
+  }
+
+</style>
+
+<style>
+  /* 移动端 */
+  .mobileDeatil {
+    width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: .5rem;
+    background: #fff;
+    margin-top: 2.5rem;
+    font-size: .7rem;
+  }
+
+  .mobileDeatilMsg {
+    margin-bottom: 1rem;
+  }
+
+  .mobileDeatilMsg .item {
+    font-size: .7rem !important;
+    margin: 0 0 1rem 0 !important;
+  }
+
+  .mobileDeatilMsg .item .text {
+    width: 30% !important;
+  }
+
+  .mobileDeatilMsg .item .el-input {
+    width: 60% !important;
+  }
+
+  .mobileDeatilMsg .item .el-textarea {
+    width: 60% !important;
+  }
+
+  .mobileDeatilMsg .item .filelabel {
+    left: 5.8rem !important;
+    bottom: .4rem !important;
+  }
+
+  .mobileDeatilMsg .el-radio {
+    margin-right: .5rem;
+  }
+
+  .el-input.is-disabled .el-input__inner {
+    color: #66b1ff;
+  }
+
+  .el-textarea.is-disabled .el-textarea__inner {
+    color: #66b1ff;
+  }
+
+  .el-radio__input.is-disabled.is-checked .el-radio__inner::after {
+    background-color: #66b1ff;
   }
 
 </style>

@@ -15,6 +15,7 @@
     <div class="clickItem">
       <div @click="addGoods">新增失物</div>
       <div @click="goodsDetail">失物记录</div>
+      <div @click="returnLogin">退出登录</div>
     </div>
     <Footer :curr="curr"></Footer>
   </div>
@@ -37,6 +38,9 @@
       },
       goodsDetail(){
         this.$router.push({path:'/goodslist'})
+      },
+      returnLogin(){
+        this.$router.push({path:'/login'})
       }
     },
     created(){

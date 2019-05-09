@@ -1,5 +1,5 @@
 <template>
-  <div class="index">
+  <div class="index" v-if="!mobile">
     <el-container style="position:fixed;top:0;bottom:0;left:0;width:100%;">
       <div class="aside">
         <el-aside width="200px" style="background-color: #eee">
@@ -44,11 +44,18 @@
       </el-container>
     </el-container>
   </div>
+  <div class="mobileDeatil" v-else-if="mobile">
+    <Header :title="title"></Header>
+    <div class="mobileDeatilMsg">
+      <input-text :form='form' @save='save' :edit="edit"></input-text>
+    </div>
+  </div>
 </template>
 
 <script>
   import inputText from '../../common/input';
   import axios from "axios";
+  import Header from '../../common/header';
   export default {
     data() {
       return {
@@ -74,7 +81,10 @@
           edit: false,
           receivername: '',
           receiverphone: ''
-        }
+        },
+        screenWidth: document.body.clientWidth,
+        mobile: false,
+        title: "新增失物"
       }
     },
     methods: {
@@ -147,10 +157,34 @@
       this.sex = this.$cookies.get("sex");
     },
     created() {
+      if (document.body.clientWidth < 1024) {
+        this.mobile = true;
+      } else {
+        this.mobile = false;
+      }
       this.type = this.$cookies.get("type")
     },
+    mounted() {
+      const that = this
+      window.onresize = () => {
+        return (() => {
+          window.screenWidth = document.body.clientWidth
+          that.screenWidth = window.screenWidth
+        })()
+      }
+    },
+    watch: {
+      screenWidth(val) {
+        if (val <= 1024) {
+          this.mobile = true;
+        } else {
+          this.mobile = false;
+        }
+      }
+    },
     components: {
-      inputText
+      inputText,
+      Header
     }
   };
 
@@ -249,6 +283,52 @@
 
   .el-main {
     padding: 20px;
+  }
+  .el-upload {
+    border: 1px dashed #d9d9d9
+  }
+
+</style>
+
+<style>
+  /* 移动端 */
+  .mobileDeatil {
+    width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: .5rem;
+    background: #fff;
+    margin-top: 2.5rem;
+    font-size: .7rem;
+  }
+
+  .mobileDeatilMsg {
+    margin-bottom: 1rem;
+  }
+
+  .mobileDeatilMsg .item {
+    font-size: .7rem !important;
+    margin: 0 0 1rem 0 !important;
+  }
+
+  .mobileDeatilMsg .item .text {
+    width: 30% !important;
+  }
+
+  .mobileDeatilMsg .item .el-input {
+    width: 60% !important;
+  }
+
+  .mobileDeatilMsg .item .el-textarea {
+    width: 60% !important;
+  }
+
+  .mobileDeatilMsg .item .filelabel {
+    left: 5.8rem !important;
+    bottom: .4rem !important;
+  }
+  .el-upload {
+    border: 1px dashed #d9d9d9
   }
 
 </style>

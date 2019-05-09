@@ -17,6 +17,8 @@ app.use(cookieParser());
 app.use('/user',require('./user'));
 //引用路由
 app.use('/api',apiRouter);
+//配置静态资源文件夹
+app.use(express.static('public'));
 //开端口
 
 app.listen(3001);

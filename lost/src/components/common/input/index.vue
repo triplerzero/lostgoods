@@ -5,8 +5,8 @@
       <el-input v-model="form.id" placeholder="发布人学号" disabled="disabled"></el-input>
     </div>
     <div class="item">
-      <div class="text"><label>发布人:</label></div>
-      <el-input v-model="form.name" placeholder="发布人" disabled="disabled"></el-input>
+      <div class="text"><label>发布人姓名:</label></div>
+      <el-input v-model="form.name" placeholder="发布人姓名" disabled="disabled"></el-input>
     </div>
     <div class="item">
       <div class="text"><label>物品名称:</label></div>
@@ -147,10 +147,21 @@
         this.$emit('report');
       },
       save() {
+        let selectDate = this.form.date.getTime();
+        let nowDate = new Date().getTime();
         this.btn = true;
         if (this.form.goodsname == "") {
           this.$message({
             message: "物品名称不能为空",
+            type: "error",
+            center: "true"
+          });
+          this.btn = false;
+          return false;
+        }
+        if (selectDate > nowDate) {
+          this.$message({
+            message: "选择日期不能大于今天",
             type: "error",
             center: "true"
           });
@@ -174,6 +185,17 @@
           });
           this.btn = false;
           return false;
+        } else {
+          let valid_rule = /^(13[0-9]|14[5-9]|15[012356789]|166|17[0-8]|18[0-9]|19[8-9])[0-9]{8}$/; // 手机号码校验规则
+          if (!valid_rule.test(this.form.phone)) {
+            this.$message({
+              message: "手机号码格式有误",
+              type: "error",
+              center: "true"
+            });
+            this.btn = false;
+            return false;
+          }
         }
         if (this.form.state == '2') {
           if (this.form.receivername == "") {
