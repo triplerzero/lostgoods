@@ -39,7 +39,7 @@
         </el-header>
         <div class="main">
           <el-main>
-            <input-text :form='form' :edit='edit' @save="save" @report="report"></input-text>
+            <input-text :form='form' :edit='edit' @save="save" @report="report" @deletegoods="deletegoods"></input-text>
           </el-main>
         </div>
       </el-container>
@@ -56,7 +56,7 @@
   <div class="mobileDeatil" v-else-if="mobile">
     <Header :title="title"></Header>
     <div class="mobileDeatilMsg">
-      <input-text :form='form' :edit='edit' @save="save" @report="mobilereport"></input-text>
+      <input-text :form='form' :edit='edit' @save="save" @deletegoods="deletegoods" :reportShow="reportShow"></input-text>
     </div>
   </div>
 </template>
@@ -78,6 +78,7 @@
         centerDialogVisible: false,
         screenWidth: document.body.clientWidth,
         mobile: false,
+        reportShow: false,
         form: {
           _id: '',
           id: this.userid,
@@ -181,8 +182,31 @@
           });
         })
       },
-      mobilereport() {
-        console.log(2222)
+      deletegoods() {
+        console.log(555555)
+        let query = this.$route.query.id;
+        this.$confirm('此操作将永久删除该失物信息, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          axios.post('/user/deleteGoods', {
+            _id: query
+          }).then(res => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+            this.$router.push({
+              path: "/goodslist"
+            });
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
       }
     },
     beforeMount() {
@@ -396,6 +420,9 @@
 
   .el-radio__input.is-disabled.is-checked .el-radio__inner::after {
     background-color: #66b1ff;
+  }
+  .el-message-box{
+    width:18rem;
   }
 
 </style>

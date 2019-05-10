@@ -83,10 +83,10 @@
       </el-input>
     </div>
     <div class="btn" v-if="edit&&!del">
-      <el-button type="primary" @click='report' :disabled="btn">匿名举报</el-button>
+      <el-button type="primary" @click='report' :disabled="btn" v-if="reportShow">匿名举报</el-button>
     </div>
     <div class="btn" v-if="!edit">
-      <el-button type="info" @click='back'>返回</el-button>
+      <el-button type="info" @click='deletegoods'>删除</el-button>
       <el-button type="primary" @click='save' :disabled="btn">保存</el-button>
     </div>
     <div class="btn" v-if="del">
@@ -119,6 +119,12 @@
         default: function () {
           return "";
         }
+      },
+      reportShow:{
+        type: Boolean,
+        default: function () {
+          return true
+        } 
       }
     },
     data() {
@@ -156,8 +162,9 @@
       uploadImg() {
 
       },
-      back() {
-        this.$router.go(-1)
+      deletegoods() {
+        console.log("dajgdja")
+        this.$emit('deletegoods')
       },
       delgoods() {
         this.$emit('delgoods')

@@ -76,6 +76,7 @@
         .infoText{
           margin-left:1rem;
           font-size: .7rem; 
+          text-align: left;
         }
       }
     }

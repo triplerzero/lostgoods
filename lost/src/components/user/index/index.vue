@@ -166,6 +166,7 @@
         reason: '',
         activeName: 'first',
         centerDialogVisible: false,
+        goodstype:'',
         row: {},
         options: [{
             value: '1',
@@ -206,8 +207,7 @@
         page: 1,
         pagesize: 10,
         mobilepage: 1,
-        loading: true,
-        goodstype:""
+        loading: true
       }
     },
     methods: {
@@ -225,17 +225,6 @@
       handleCurrentChange(val) {
         this.page = val;
         this.getData()
-      },
-      //分页获取数据
-      getSerachData(params) {
-        axios.get('/user/getGoodsList', {
-          type:this.type
-        }).then(res => {
-          if (res) {
-            let data = res.data.data;
-            this.tableData = data;
-          }
-        })
       },
       //导航栏
       handleSelect(key, keyPath) {
@@ -297,10 +286,10 @@
       },
       //tab栏
       handleTab(tab, event) {
-        this.goodstype = tab.index;
+        this.searchData.type = tab.index;
         this.page=1;
         if(tab.index=="0"){
-          this.goodstype=""
+          this.searchData.type=""
         }
         this.getData();
       },
@@ -351,7 +340,7 @@
           params: {
             page: this.page,
             pagesize:10,
-            type:this.goodstype,
+            type:this.searchData.type,
             goodsname:this.searchData.goodsname,
             feature:this.searchData.feature,
             address:this.searchData.address,

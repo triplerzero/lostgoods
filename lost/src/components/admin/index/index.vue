@@ -1,5 +1,5 @@
 <template>
-  <div class="index" v-if="!mobile">
+  <div class="index">
     <el-container style="position:fixed;top:0;bottom:0;left:0;width:100%;">
       <div class="aside">
         <el-aside width="200px" style="background-color: #eee">
@@ -77,17 +77,18 @@
                   <span>{{type[scope.row.type]}}</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="feature" label="物品特征">
+              <el-table-column prop="feature" label="物品特征" show-overflow-tooltip>
               </el-table-column>
-              <el-table-column prop="address" label="地点">
+              <el-table-column prop="address" label="地点" show-overflow-tooltip>
               </el-table-column>
               <el-table-column prop="phone" label="联系方式">
               </el-table-column>
-              <el-table-column prop="remarks" label="备注">
+              <el-table-column prop="remarks" label="备注" show-overflow-tooltip>
               </el-table-column>
               <el-table-column prop="state" label="失物状态">
                 <template slot-scope="scope">
-                  <span>{{status[scope.row.state]}}</span>
+                  <span v-if="scope.row.type=='1'">{{status[scope.row.state]}}</span>
+                  <span v-if="scope.row.type=='2'">{{statuse[scope.row.state]}}</span>
                 </template>
               </el-table-column>
               <el-table-column prop="details" label="操作">
@@ -109,9 +110,6 @@
       </el-container>
     </el-container>
   </div>
-  <div class="mobileindex" v-else-if="mobile">
-    <Header :title="title"></Header>
-  </div>
 </template>
 
 <script>
@@ -132,11 +130,11 @@
         currentPage: 1,
         options: [{
             value: '1',
-            label: '未领取'
+            label: '未领取/未找回'
           },
           {
             value: '2',
-            label: '已领取'
+            label: '已领取/已找回'
           }
         ],
         type: {
@@ -147,11 +145,15 @@
           "1": "未领取",
           "2": "已领取"
         },
+        statuse: {
+          "1": "未找回",
+          "2": "已找回"
+        },
         searchData: {
           goodsname: '',
           feature: '',
           address: '',
-          type: '0',
+          type: '',
           state: ''
         }
       }
@@ -160,12 +162,8 @@
       //分页
       handleSizeChange(val) {},
       handleCurrentChange(val) {
-        console.log(val)
-        let params = {
-          page: val,
-          pagesize: 10
-        }
-        this.getPagerData(params)
+        this.page = val;
+        this.getData()
       },
       //导航栏
       handleSelect(key, keyPath) {
@@ -211,36 +209,17 @@
       },
       //tab栏
       handleTab(tab, event) {
-        this.searchData.goodsname = '';
-        this.searchData.feature = '';
-        this.searchData.address = ''
-        let params = {
-          type: tab.index
-        };
-        this.getData(params);
         this.searchData.type = tab.index;
+        this.page = 1;
+        if (tab.index == "0") {
+          this.searchData.type = ""
+        }
+        this.getData();
       },
       //搜索
       handleSearch() {
-        if (!(this.searchData.goodsname == '' && this.searchData.feature == '' && this.searchData.address == '' && this
-            .searchData.state == '')) {
-          axios.get('/user/getGoodsList', {
-            params: {
-              goodsname: this.searchData.goodsname,
-              feature: this.searchData.feature,
-              address: this.searchData.address,
-              stype: this.searchData.type,
-              state: Number(this.searchData.state)
-            }
-          }).then(res => {
-            if (res) {
-              let data = res.data.data;
-              this.tableData = data;
-            }
-          })
-        } else {
-          this.getData()
-        }
+        this.page = 1;
+        this.getData()
       },
       //删除失物
       handleDelete(row) {
@@ -282,6 +261,10 @@
           axios.post('user/deleteGoodsAll', {
             delArray: array
           }).then(res => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
             this.getData();
           })
         }).catch(() => {
@@ -292,9 +275,20 @@
         });
       },
       //获取数据
-      getData(params) {
+      getData() {
+        if (this.searchData.state == "0") {
+          this.searchData.state = ""
+        }
         axios.get('/user/getGoodsList', {
-          params
+          params: {
+            page: this.page,
+            pagesize: 10,
+            type: this.searchData.type,
+            goodsname: this.searchData.goodsname,
+            feature: this.searchData.feature,
+            address: this.searchData.address,
+            state: this.searchData.state
+          }
         }).then(res => {
           if (res) {
             let data = res.data.data;
@@ -302,18 +296,7 @@
             this.total = res.data.total;
           }
         })
-      },
-      //分页获取数据
-      getPagerData(params) {
-        axios.get('/user/getGoodsList', {
-          params
-        }).then(res => {
-          if (res) {
-            let data = res.data.data;
-            this.tableData = data;
-          }
-        })
-      },
+      }
     },
     created() {
       this.name = this.$cookies.get("username");
@@ -428,15 +411,6 @@
 
   .el-main {
     padding: 20px;
-  }
-
-  .el-table .cell {
-    text-overflow: -o-ellipsis-lastline;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
   }
 
   .search {

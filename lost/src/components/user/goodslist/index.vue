@@ -96,7 +96,7 @@
             </div>
             <div class="right">
               <p>名称：{{item.goodsname}}</p>
-              <p>类型：{{type[item.type]}}</p>
+              <p>类型：{{stype[item.type]}}</p>
               <p>发布人学号：{{item.id}}</p>
               <p>发布人姓名：{{item.name}}</p>
               <p>物品特征：{{item.feature}}</p>
@@ -107,6 +107,9 @@
       </scroll>
     </div>
     <Footer :curr="curr"></Footer>
+    <div class="empty" v-if="empty">
+      暂无发布记录
+    </div>
   </div>
 </template>
 
@@ -143,7 +146,8 @@
         mobile: false,
         title: "发布记录",
         lists: [],
-        curr: 2
+        curr: 2,
+        empty:false
       }
     },
     methods: {
@@ -240,6 +244,11 @@
           }
         }).then(res => {
           if (res) {
+            if(res.data.data.length){
+              this.empty=false
+            }else{
+              this.empty=true
+            }
             let data = res.data.data;
             this.tableData = data;
             this.lists = data;
@@ -250,7 +259,8 @@
         this.$router.push({
           path: "/goodsdetails",
           query: {
-            id: item
+            id: item,
+            edit:1
           }
         });
       },
@@ -511,6 +521,13 @@
   .main-content {
     height: 100%;
     overflow: hidden
+  }
+  .empty{
+    position: fixed;
+    top: 50%;
+    transform:translateY(-50%);
+    width: 100%;
+    text-align: center; 
   }
 
 </style>
