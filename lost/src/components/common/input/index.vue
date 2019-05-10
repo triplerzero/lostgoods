@@ -86,7 +86,8 @@
       <el-button type="primary" @click='report' :disabled="btn" v-if="reportShow">匿名举报</el-button>
     </div>
     <div class="btn" v-if="!edit">
-      <el-button type="info" @click='deletegoods'>删除</el-button>
+      <el-button type="info" @click='backpage' v-if="isback">返回</el-button>
+      <el-button type="info" @click='deletegoods' v-if="!isback">删除</el-button>
       <el-button type="primary" @click='save' :disabled="btn">保存</el-button>
     </div>
     <div class="btn" v-if="del">
@@ -125,6 +126,12 @@
         default: function () {
           return true
         } 
+      },
+      isback:{
+        type: Boolean,
+        default: function () {
+          return false
+        }
       }
     },
     data() {
@@ -161,6 +168,9 @@
       },
       uploadImg() {
 
+      },
+      backpage(){
+        this.$router.go(-1)
       },
       deletegoods() {
         console.log("dajgdja")

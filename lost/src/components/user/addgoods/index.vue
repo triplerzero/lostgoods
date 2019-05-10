@@ -38,7 +38,7 @@
         </el-header>
         <div class="main">
           <el-main>
-            <input-text :form='form' @save='save' :edit="edit"></input-text>
+            <input-text :form='form' @save='save' :edit="edit" :isback="isback"></input-text>
           </el-main>
         </div>
       </el-container>
@@ -47,7 +47,7 @@
   <div class="mobileDeatil" v-else-if="mobile">
     <Header :title="title"></Header>
     <div class="mobileDeatilMsg">
-      <input-text :form='form' @save='save' :edit="edit"></input-text>
+      <input-text :form='form' @save='save' :edit="edit" :isback="isback"></input-text>
     </div>
   </div>
 </template>
@@ -66,6 +66,7 @@
         type: 0,
         edit: false,
         type: 0,
+        isback:true,
         form: {
           date: new Date(),
           id: this.userid,
