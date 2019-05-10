@@ -434,15 +434,14 @@ Router.get('/getGoodsList', (req, res) => {
 //获取失物列表（移动端）
 Router.get('/getGoods', (req, res) => {
   if (req.query.search) {
-    let searchCon = req.query.search.split(' ');
     let goodsname = Goods.find({
-      $and: [{
+      $or: [{
         goodsname: {
-          $regex: searchCon[0]
+          $regex: req.query.search
         }
       }, {
         feature: {
-          $regex: searchCon[1]
+          $regex: req.query.search
         }
       }]
     }).limit(10).sort({

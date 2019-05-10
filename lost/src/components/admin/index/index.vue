@@ -60,7 +60,8 @@
               <el-table-column prop="goodsname" label="物品">
                 <template slot-scope="scope">
                   <div class="goods_msg">
-                    <img :src="scope.row.pic" class="goods_pic" />
+                    <img v-if="scope.row.pic" :src="scope.row.pic" class="goods_pic" />
+                    <img v-if="!scope.row.pic" src="../../src/pic.jpg" class="goods_pic">
                     <span class="goods_name">{{scope.row.goodsname}}</span>
                   </div>
                 </template>
@@ -109,7 +110,7 @@
     </el-container>
   </div>
   <div class="mobileindex" v-else-if="mobile">
-      <Header :title="title"></Header>
+    <Header :title="title"></Header>
   </div>
 </template>
 
@@ -155,7 +156,7 @@
         },
         screenWidth: document.body.clientWidth,
         mobile: false,
-        title:"首页"
+        title: "首页"
       }
     },
     methods: {
@@ -318,10 +319,10 @@
       },
     },
     created() {
-      if(document.body.clientWidth<1024){
-        this.mobile=true;
-      }else{
-        this.mobile=false;
+      if (document.body.clientWidth < 1024) {
+        this.mobile = true;
+      } else {
+        this.mobile = false;
       }
       this.name = this.$cookies.get("username");
       this.id = this.$cookies.get("id");
@@ -349,10 +350,10 @@
     },
     watch: {
       screenWidth(val) {
-        if (val<=1024) {
-          this.mobile=true;
-        }else{
-          this.mobile=false;
+        if (val <= 1024) {
+          this.mobile = true;
+        } else {
+          this.mobile = false;
         }
       }
     },

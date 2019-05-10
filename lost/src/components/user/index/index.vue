@@ -75,13 +75,13 @@
                   <span>{{type[scope.row.type]}}</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="feature" label="物品特征">
+              <el-table-column prop="feature" label="物品特征" show-overflow-tooltip>
               </el-table-column>
-              <el-table-column prop="address" label="地点">
+              <el-table-column prop="address" label="地点" show-overflow-tooltip>
               </el-table-column>
               <el-table-column prop="phone" label="联系方式">
               </el-table-column>
-              <el-table-column prop="remarks" label="备注">
+              <el-table-column prop="remarks" label="备注" show-overflow-tooltip>
               </el-table-column>
               <el-table-column prop="state" label="失物状态">
                 <template slot-scope="scope">
@@ -141,6 +141,9 @@
       </scroll>
     </div>
     <Footer :curr="curr"></Footer>
+    <div :class="loading?'loading':'loadinghide'" v-loading="loading" element-loading-lock="true"
+      element-loading-text="加载中..." element-loading-background="rgba(0, 0, 0, 0.8)"></div>
+  </div>
   </div>
   </div>
 </template>
@@ -329,30 +332,39 @@
         }
       },
       //获取移动端数据
-      getMobileData() {
+      getMobileData(params) {
         axios.get('/user/getGoods', {
-          params: {
-            page: this.mobilepage,
-            pagesize: 10
-          }
+          params: params
         }).then(res => {
           if (res) {
-            let data = res.data.data;
-            this.lists = data;
+            if (res.data.data) {
+              let data = res.data.data;
+              this.lists = this.lists.concat(data);
+              setTimeout(() => {
+                this.loading = false;
+              }, 200)
+            } else {
+              this.loading = false;
+            }
           }
         })
       },
+      scrollTo() {
+        scrollTo(0, 0);
+      },
       //移动端搜索
       search() {
-        axios.get('/user/getGoods', {
-          params: {
-            search: this.searchCon
-          }
-        }).then(res => {
-          if (res) {
-            let data = res.data.data;
-          }
-        })
+        ;
+        this.scrollTo();
+        this.loading = true;
+        this.lists = [];
+        this.mobilepage = 1;
+        let params = {
+          page: 1,
+          pagesize: 10,
+          search: this.searchCon
+        }
+        this.getMobileData(params);
       },
       getData(params) {
         axios.get('/user/getGoodsList', {
@@ -367,22 +379,15 @@
       },
       //滚动加载
       scrollToEnd() {
-        if (loading) {
+        this.loading = true;
+        if (this.loading) {
           this.mobilepage++;
-          axios.get('/user/getGoods', {
-            params: {
-              page: this.mobilepage,
-              pagesize: 10
-            }
-          }).then(res => {
-            if (res) {
-              if (res.data.data) {
-                let data = res.data.data;
-                this.lists = this.lists.concat(data);
-                this.loading=false;
-              }
-            }
-          })
+          let params = {
+            page: this.mobilepage,
+            pagesize: 10,
+            search: this.searchCon
+          }
+          this.getMobileData(params)
         }
       }
     },
@@ -404,7 +409,12 @@
     created() {
       if (document.body.clientWidth < 1024) {
         this.mobile = true;
-        this.getMobileData()
+        let params = {
+          page: this.mobilepage,
+          pagesize: 10,
+          search: this.searchCon
+        }
+        this.getMobileData(params)
       } else {
         this.mobile = false;
         this.getData()
@@ -529,15 +539,6 @@
 
   .el-main {
     padding: 20px;
-  }
-
-  .el-table .cell {
-    text-overflow: -o-ellipsis-lastline;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
   }
 
   .search {
@@ -668,6 +669,19 @@
     .pager {
       float: right;
     }
+  }
+
+  .loading {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+  }
+
+  .loadinghide {
+    z-index: 0;
   }
 
 </style>

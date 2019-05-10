@@ -42,7 +42,8 @@
               <el-table-column prop="goodsname" label="物品">
                 <template slot-scope="scope">
                   <div class="goods_msg">
-                    <img :src="scope.row.pic" class="goods_pic" />
+                    <img v-if="scope.row.pic" :src="scope.row.pic" class="goods_pic" />
+                    <img v-if="!scope.row.pic" src="../../src/pic.jpg" class="goods_pic">
                     <span class="goods_name">{{scope.row.goodsname}}</span>
                   </div>
                 </template>
@@ -58,13 +59,13 @@
                   <span>{{stype[scope.row.type]}}</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="feature" label="物品特征">
+              <el-table-column prop="feature" label="物品特征" show-overflow-tooltip>
               </el-table-column>
-              <el-table-column prop="address" label="地点">
+              <el-table-column prop="address" label="地点" show-overflow-tooltip>
               </el-table-column>
               <el-table-column prop="phone" label="联系方式">
               </el-table-column>
-              <el-table-column prop="remarks" label="备注">
+              <el-table-column prop="remarks" label="备注" show-overflow-tooltip>
               </el-table-column>
               <el-table-column prop="state" label="失物状态">
                 <template slot-scope="scope">
@@ -405,15 +406,6 @@
 
   .el-main {
     padding: 20px;
-  }
-
-  .el-table .cell {
-    text-overflow: -o-ellipsis-lastline;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
   }
 
   .search {
