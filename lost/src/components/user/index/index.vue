@@ -85,7 +85,8 @@
               </el-table-column>
               <el-table-column prop="state" label="失物状态">
                 <template slot-scope="scope">
-                  <span>{{status[scope.row.state]}}</span>
+                  <span v-if="scope.row.type=='1'">{{status[scope.row.state]}}</span>
+                  <span v-if="scope.row.type=='2'">{{statuse[scope.row.state]}}</span>
                 </template>
               </el-table-column>
               <el-table-column prop="details" label="操作">
@@ -168,11 +169,11 @@
         row: {},
         options: [{
             value: '1',
-            label: '未领取'
+            label: '未领取/未找回'
           },
           {
             value: '2',
-            label: '已领取'
+            label: '已领取/已找回'
           }
         ],
         type: {
@@ -183,11 +184,15 @@
           "1": "未领取",
           "2": "已领取"
         },
+        statuse: {
+          "1": "未找回",
+          "2": "已找回"
+        },
         searchData: {
           goodsname: '',
           feature: '',
           address: '',
-          type: '0',
+          type: '',
           state: ''
         },
         screenWidth: document.body.clientWidth,
@@ -198,10 +203,11 @@
         total: 0,
         currentPage: 1,
         searchCon: "",
-        page: 0,
-        pagesize: 0,
+        page: 1,
+        pagesize: 10,
         mobilepage: 1,
-        loading: true
+        loading: true,
+        goodstype:""
       }
     },
     methods: {
@@ -218,17 +224,12 @@
       handleSizeChange(val) {},
       handleCurrentChange(val) {
         this.page = val;
-        this.pagesize = 10;
-        // let params = {
-        //   page: val,
-        //   pagesize: 10
-        // }
-        // this.getPagerData(params)
+        this.getData()
       },
       //分页获取数据
-      getPagerData(params) {
+      getSerachData(params) {
         axios.get('/user/getGoodsList', {
-          params
+          type:this.type
         }).then(res => {
           if (res) {
             let data = res.data.data;
@@ -296,40 +297,17 @@
       },
       //tab栏
       handleTab(tab, event) {
-        console.log(tab.index);
-        this.searchData.goodsname = '';
-        this.searchData.feature = '';
-        this.searchData.address = '';
-        let params = {
-          type: tab.index
-        };
-        if (tab.index === "0") {
-          let params = {};
+        this.goodstype = tab.index;
+        this.page=1;
+        if(tab.index=="0"){
+          this.goodstype=""
         }
-        this.getData(params);
-        this.searchData.type = tab.index;
+        this.getData();
       },
       //搜索
       handleSearch() {
-        if (!(this.searchData.goodsname == '' && this.searchData.feature == '' && this.searchData.address == '' && this
-            .searchData.state == '')) {
-          axios.get('/user/getGoodsList', {
-            params: {
-              goodsname: this.searchData.goodsname,
-              feature: this.searchData.feature,
-              address: this.searchData.address,
-              stype: this.searchData.type,
-              state: Number(this.searchData.state)
-            }
-          }).then(res => {
-            if (res) {
-              let data = res.data.data;
-              this.tableData = data;
-            }
-          })
-        } else {
-          this.getData()
-        }
+        this.page=1;
+        this.getData()
       },
       //获取移动端数据
       getMobileData(params) {
@@ -354,7 +332,6 @@
       },
       //移动端搜索
       search() {
-        ;
         this.scrollTo();
         this.loading = true;
         this.lists = [];
@@ -366,9 +343,20 @@
         }
         this.getMobileData(params);
       },
-      getData(params) {
+      getData() {
+        if(this.searchData.state=="0"){
+          this.searchData.state=""
+        }
         axios.get('/user/getGoodsList', {
-          params
+          params: {
+            page: this.page,
+            pagesize:10,
+            type:this.goodstype,
+            goodsname:this.searchData.goodsname,
+            feature:this.searchData.feature,
+            address:this.searchData.address,
+            state:this.searchData.state
+          }
         }).then(res => {
           if (res) {
             let data = res.data.data;
@@ -433,8 +421,15 @@
       screenWidth(val) {
         if (val <= 1024) {
           this.mobile = true;
+          let params = {
+            page: this.mobilepage,
+            pagesize: 10,
+            search: this.searchCon
+          }
+          this.getMobileData(params)
         } else {
           this.mobile = false;
+          this.getData()
         }
       }
     },

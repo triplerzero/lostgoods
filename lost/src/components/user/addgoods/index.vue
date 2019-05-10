@@ -23,7 +23,7 @@
           </el-menu>
         </el-aside>
       </div>
-
+ 
       <el-container>
         <el-header style="text-align: right; font-size: 12px">
           <div class="nav">
@@ -128,9 +128,16 @@
               type: "success",
               center: "true"
             });
-            this.$router.push({
-              path: '/index'
-            })
+            let type = this.$cookies.get("type");
+            if (type == 0) {
+              this.$router.push({
+                path: '/index'
+              })
+            } else if (type == 1) {
+              this.$router.push({
+                path: '/adminIndex'
+              })
+            }
           } else {
             this.$message({
               message: res.data.msg,

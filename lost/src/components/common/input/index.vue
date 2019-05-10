@@ -42,18 +42,30 @@
     </div>
     <div class="item">
       <div class="text"><label>物品状态:</label></div>
-      <el-select v-model="form.state" placeholder="请选择" :disabled="edit">
+      <el-select v-model="form.state" placeholder="请选择" :disabled="edit" v-if="form.type=='1'">
         <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
         </el-option>
       </el-select>
+      <el-select v-model="form.state" placeholder="请选择" :disabled="edit" v-if="form.type=='2'">
+        <el-option v-for="item in optionse" :key="item.values" :label="item.labels" :value="item.values">
+        </el-option>
+      </el-select>
     </div>
-    <div class="item" v-if="form.state=='2'">
+    <div class="item" v-if="form.type=='1'&&form.state=='2'">
       <div class="text"><label>领取人姓名:</label></div>
       <el-input v-model="form.receivername" placeholder="领取人姓名" :disabled="edit"></el-input>
     </div>
-    <div class="item" v-if="form.state=='2'">
+    <div class="item" v-if="form.type=='1'&&form.state=='2'">
       <div class="text"><label>领取人手机:</label></div>
-      <el-input v-model="form.receiverphone" placeholder="领取人联系方式" :disabled="edit"></el-input>
+      <el-input v-model="form.receiverphone" placeholder="领取人手机" :disabled="edit"></el-input>
+    </div>
+    <div class="item" v-if="form.type=='2'&&form.state=='2'">
+      <div class="text active"><label>找回人姓名:</label></div>
+      <el-input v-model="form.receivername" placeholder="找回人姓名" :disabled="edit"></el-input>
+    </div>
+    <div class="item" v-if="form.type=='2'&&form.state=='2'">
+      <div class="text active"><label>找回人手机:</label></div>
+      <el-input v-model="form.receiverphone" placeholder="找回人手机" :disabled="edit"></el-input>
     </div>
     <div class="item">
       <div class="text"><label>物品特征:</label></div>
@@ -117,6 +129,13 @@
         }, {
           value: '2',
           label: '已领取'
+        }],
+        optionse: [{
+          values: '1',
+          labels: '未找回'
+        }, {
+          values: '2',
+          labels: '已找回'
         }],
         btn: false
       }
@@ -197,7 +216,7 @@
             return false;
           }
         }
-        if (this.form.state == '2') {
+        if (this.form.type == '1' && this.form.state == '2') {
           if (this.form.receivername == "") {
             this.$message({
               message: "领取人名字不能为空",
@@ -207,7 +226,7 @@
             this.btn = false;
             return false;
           }
-          if (this.form.receiverphone == "") {
+          if (this.form.type == '1' && this.form.receiverphone == "") {
             this.$message({
               message: "领取人手机不能为空",
               type: "error",
@@ -215,9 +234,9 @@
             });
             this.btn = false;
             return false;
-          } else {
+          } else if (this.form.type == '1' && this.form.receiverphone != "") {
             let valid_rule = /^(13[0-9]|14[5-9]|15[012356789]|166|17[0-8]|18[0-9]|19[8-9])[0-9]{8}$/; // 手机号码校验规则
-            if (!valid_rule.test(this.form.phone)) {
+            if (!valid_rule.test(this.form.receiverphone)) {
               this.$message({
                 message: "领取人手机号码格式有误",
                 type: "error",
@@ -226,6 +245,18 @@
               this.btn = false;
               return false;
             }
+          }
+        }
+        if (this.form.type == '2' && this.form.receiverphone != "") {
+          let valid_rule = /^(13[0-9]|14[5-9]|15[012356789]|166|17[0-8]|18[0-9]|19[8-9])[0-9]{8}$/; // 手机号码校验规则
+          if (!valid_rule.test(this.form.receiverphone)) {
+            this.$message({
+              message: "找回人手机号码格式有误",
+              type: "error",
+              center: "true"
+            });
+            this.btn = false;
+            return false;
           }
         }
         if (this.form.feature == "") {

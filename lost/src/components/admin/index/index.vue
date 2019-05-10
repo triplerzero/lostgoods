@@ -153,10 +153,7 @@
           address: '',
           type: '0',
           state: ''
-        },
-        screenWidth: document.body.clientWidth,
-        mobile: false,
-        title: "首页"
+        }
       }
     },
     methods: {
@@ -319,11 +316,6 @@
       },
     },
     created() {
-      if (document.body.clientWidth < 1024) {
-        this.mobile = true;
-      } else {
-        this.mobile = false;
-      }
       this.name = this.$cookies.get("username");
       this.id = this.$cookies.get("id");
       this.sex = this.$cookies.get("sex");
@@ -339,27 +331,6 @@
       }
       this.getData();
     },
-    mounted() {
-      const that = this
-      window.onresize = () => {
-        return (() => {
-          window.screenWidth = document.body.clientWidth
-          that.screenWidth = window.screenWidth
-        })()
-      }
-    },
-    watch: {
-      screenWidth(val) {
-        if (val <= 1024) {
-          this.mobile = true;
-        } else {
-          this.mobile = false;
-        }
-      }
-    },
-    components: {
-      Header
-    }
   };
 
 </script>

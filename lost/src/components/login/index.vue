@@ -54,7 +54,6 @@
             userId,
             pwd
           }).then(res => {
-            console.log(res);
             if (res.status == 200 && res.data.code == 0) {
               this.$message({
                 message: "登陆成功",
@@ -80,6 +79,7 @@
             pwd
           }).then(res => {
             if (res.status == 200 && res.data.code == 0) {
+              this.$cookies.set({admin:1});
               this.$message({
                 message: "登陆成功",
                 type: "success",
