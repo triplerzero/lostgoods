@@ -71,7 +71,7 @@
       </el-input>
     </div>
     <div class="btn" v-if="edit&&!del">
-      <el-button type="primary" @click='report' :disabled="btn">举报</el-button>
+      <el-button type="primary" @click='report' :disabled="btn">匿名举报</el-button>
     </div>
     <div class="btn" v-if="!edit">
       <el-button type="info" @click='back'>返回</el-button>

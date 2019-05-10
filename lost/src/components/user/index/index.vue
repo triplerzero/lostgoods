@@ -91,7 +91,7 @@
               <el-table-column prop="details" label="操作">
                 <template slot-scope="scope">
                   <el-button @click="handleClick(scope.row)" type="text" size="small">详情</el-button>
-                  <el-button @click="handleReport(scope.row)" type="text" size="small">举报</el-button>
+                  <el-button @click="handleReport(scope.row)" type="text" size="small">匿名举报</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -194,7 +194,11 @@
         curr: 1,
         total: 0,
         currentPage: 1,
-        searchCon:""
+        searchCon: "",
+        page: 0,
+        pagesize: 0,
+        mobilepage: 1,
+        loading: true
       }
     },
     methods: {
@@ -210,11 +214,13 @@
       //分页
       handleSizeChange(val) {},
       handleCurrentChange(val) {
-        let params = {
-          page: val,
-          pagesize: 10
-        }
-        this.getPagerData(params)
+        this.page = val;
+        this.pagesize = 10;
+        // let params = {
+        //   page: val,
+        //   pagesize: 10
+        // }
+        // this.getPagerData(params)
       },
       //分页获取数据
       getPagerData(params) {
@@ -287,12 +293,16 @@
       },
       //tab栏
       handleTab(tab, event) {
+        console.log(tab.index);
         this.searchData.goodsname = '';
         this.searchData.feature = '';
-        this.searchData.address = ''
+        this.searchData.address = '';
         let params = {
           type: tab.index
         };
+        if (tab.index === "0") {
+          let params = {};
+        }
         this.getData(params);
         this.searchData.type = tab.index;
       },
@@ -318,17 +328,29 @@
           this.getData()
         }
       },
-      //移动端搜索
-      search() {
+      //获取移动端数据
+      getMobileData() {
         axios.get('/user/getGoods', {
           params: {
-            search:this.searchCon
+            page: this.mobilepage,
+            pagesize: 10
           }
         }).then(res => {
           if (res) {
             let data = res.data.data;
             this.lists = data;
-            console.log(res)
+          }
+        })
+      },
+      //移动端搜索
+      search() {
+        axios.get('/user/getGoods', {
+          params: {
+            search: this.searchCon
+          }
+        }).then(res => {
+          if (res) {
+            let data = res.data.data;
           }
         })
       },
@@ -340,13 +362,28 @@
             let data = res.data.data;
             this.tableData = data;
             this.total = res.data.total;
-            this.lists = res.data.data;
           }
         })
       },
       //滚动加载
       scrollToEnd() {
-
+        if (loading) {
+          this.mobilepage++;
+          axios.get('/user/getGoods', {
+            params: {
+              page: this.mobilepage,
+              pagesize: 10
+            }
+          }).then(res => {
+            if (res) {
+              if (res.data.data) {
+                let data = res.data.data;
+                this.lists = this.lists.concat(data);
+                this.loading=false;
+              }
+            }
+          })
+        }
       }
     },
     beforeMount() {
@@ -367,10 +404,11 @@
     created() {
       if (document.body.clientWidth < 1024) {
         this.mobile = true;
+        this.getMobileData()
       } else {
         this.mobile = false;
+        this.getData()
       }
-      this.getData()
     },
     mounted() {
       const that = this
